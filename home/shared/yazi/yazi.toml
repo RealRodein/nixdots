@@ -1,0 +1,21 @@
+[opener]
+zen = [
+  { run = "zen \"$@\"", orphan = true, desc = "Open with Zen" },
+]
+
+pdf_term = [
+  { run = "$HOME/.config/yazi/open-pdf-in-terminal.sh \"$1\"", block = true, desc = "Read PDF in terminal" },
+]
+
+media_term = [
+  { run = "mpv --vo=kitty \"$1\" || mpv --vo=tct \"$1\"", block = true, desc = "Play media in terminal" },
+]
+
+[open]
+prepend_rules = [
+  { mime = "application/pdf", use = "zen" },
+  { mime = "video/*", use = "media_term" },
+  { mime = "audio/*", use = "media_term" },
+]
+
+

@@ -1,0 +1,29 @@
+# Beginner-friendly key hints: press `?` in the manager to see this menu.
+[mgr]
+prepend_keymap = [
+  { on = "Q", run = "noop", desc = "Disable default Q quit" },
+  { on = "q", run = "noop", desc = "Disable default q quit" },
+
+  { on = "<F1>", run = "help", desc = "Open help" },
+  { on = "<F2>", run = "plugin context-menu", desc = "Open helper menu" },
+
+  { on = "?", run = "help", desc = "Show all keybindings" },
+  { on = "<C-e>", run = "shell '$EDITOR \"$@\"' --block", desc = "Edit in current terminal" },
+  { on = "<C-o>", run = "open --interactive", desc = "Open with..." },
+
+  { on = "<C-c>", run = "yank", desc = "Copy selected" },
+  { on = "<C-x>", run = "yank --cut", desc = "Cut selected" },
+  { on = "<C-v>", run = "paste", desc = "Paste copied/cut files" },
+  { on = "<C-d>", run = "remove", desc = "Move selected to trash" },
+
+  { on = "<C-n>", run = "create", desc = "Create file/folder" },
+  { on = "<C-r>", run = "rename", desc = "Rename selected" },
+
+  { on = "<C-.>", run = "hidden toggle", desc = "Toggle hidden files" },
+  { on = "<C-f>", run = "find --smart", desc = "Find in current folder" },
+  { on = "<C-/>", run = "search --via=rg", desc = "Search recursively" },
+
+  { on = "<C-h>", run = "cd ~", desc = "Go to home directory" },
+  { on = "<C-q>", run = "quit", desc = "Quit Yazi" },
+  { on = "m", run = "shell 'mpv --vo=kitty \"$@\" || mpv --vo=tct \"$@\"' --block", desc = "Play in terminal (kitty/tct)" },
+]

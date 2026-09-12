@@ -1,0 +1,29 @@
+[launch-ghostty.desktop]
+_k_friendly_name=Ghostty
+_launch=Meta+T,None,Ghostty
+
+[launch-zen.desktop]
+_k_friendly_name=Zen Browser
+_launch=Meta+W,None,Zen Browser
+
+[launch-nemo.desktop]
+_k_friendly_name=Nemo
+_launch=Meta+E,None,Nemo
+
+[launch-steam.desktop]
+_k_friendly_name=Steam
+_launch=Meta+S,None,Steam
+
+[launch-vesktop.desktop]
+_k_friendly_name=Vesktop
+_launch=Meta+D,None,Vesktop
+
+[launch-zed.desktop]
+_k_friendly_name=Zed Editor
+_launch=Meta+C,None,Zed Editor
+
+[plasmashell]
+activate application launcher=Meta,none,Activate Application Launcher
+
+[krunner.desktop]
+_launch=Meta+R,Alt+Space\tMeta+Space,KRunner

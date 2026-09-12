@@ -1,0 +1,66 @@
+// Window rules let you adjust behavior for individual windows.
+// Find more information on the wiki:
+// https://yalter.github.io/niri/Configuration:-Window-Rules
+
+// Work around WezTerm's initial configure bug
+// by setting an empty default-column-width.
+window-rule {
+    // This regular expression is intentionally made as specific as possible,
+    // since this is the default config, and we want no false positives.
+    // You can get away with just app-id="wezterm" if you want.
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    default-column-width {}
+}
+
+// Open the Firefox picture-in-picture player as floating by default.
+window-rule {
+    // This app-id regular expression will work for both:
+    // - host Firefox (app-id is "firefox")
+    // - Flatpak Firefox (app-id is "org.mozilla.firefox")
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+
+// Example: block out two password managers from screen capture.
+// (This example rule is commented out with a "/-" in front.)
+/-window-rule {
+    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
+    match app-id=r#"^org\.gnome\.World\.Secrets$"#
+
+    block-out-from "screen-capture"
+
+    // Use this instead if you want them visible on third-party screenshot tools.
+    // block-out-from "screencast"
+}
+
+window-rule {
+    geometry-corner-radius 10
+    clip-to-geometry true
+}
+
+window-rule {
+    match is-focused=true
+    draw-border-with-background false
+    opacity 0.9
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+window-rule {
+    match is-focused=false
+    border { off; }
+    opacity 0.8
+}
+
+// Twitch Drops Miner: small floating window, fully opaque
+window-rule {
+    match app-id=r#"twitch drops miner \(by devilxd\)\.exe"#
+    open-floating true
+    border { on; }
+    default-floating-position x=4 y=45
+    default-column-width { fixed 1; }
+    default-window-height { fixed 1; }
+    opacity 1.0
+}

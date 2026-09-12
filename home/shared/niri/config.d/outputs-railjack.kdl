@@ -1,0 +1,18 @@
+// Railjack desktop – RTX 3070
+// Run `niri msg outputs` to get exact mode strings.
+
+output "DP-1" {
+    // Primary monitor (higher refresh rate)
+    mode "1920x1080@144"
+    scale 1
+    transform "normal"
+    position x=0 y=0
+}
+
+output "HDMI-A-1" {
+    // Second monitor – to the LEFT of main
+    mode "1920x1080@60"
+    scale 1
+    transform "normal"
+    position x=-1920 y=0
+}

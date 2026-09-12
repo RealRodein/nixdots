@@ -1,0 +1,16 @@
+{
+  "allow_gamepad_permission": true,
+  "close_on_leave": true,
+  "discord_rpc_enabled": false,
+  "discord_rpc_show_join_button": false,
+  "enable_gamemode": true,
+  "enable_hidpi": false,
+  "enable_mobile_home_screen": false,
+  "fflags": {},
+  "graphics_optimization_mode": "quality",
+  "server_location_indicator_enabled": false,
+  "touch_mode": "off",
+  "use_console_experience": false,
+  "use_libsecret": false,
+  "use_opengl": false
+}

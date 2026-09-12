@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=steam
+Name=Steam
+NoDisplay=true
+StartupNotify=false
+Type=Application
+X-KDE-GlobalAccel-CommandShortcut=true

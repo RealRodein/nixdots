@@ -1,0 +1,10 @@
+// Modular Niri config entrypoint.
+// Split by concern for easier maintenance.
+
+include "./config.d/devices.kdl"
+include "./config.d/outputs.kdl"
+include "./config.d/decorations.kdl"
+include "./noctalia.kdl"
+include "./config.d/autostart.kdl"
+include "./config.d/rules.kdl"
+include "./config.d/keybinds.kdl"
