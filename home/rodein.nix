@@ -208,20 +208,28 @@
 
   home.activation.ensureNoctaliaSymlinks = config.lib.dag.entryAfter ["writeBoundary"] ''
     if [ "${machineName}" = "orbiter" ]; then
+      DOTS="$HOME/nixdots/home/${machineName}/dotfiles/noctalia"
       mkdir -p "$HOME/.local/state/noctalia"
-      if [ ! -L "$HOME/.local/state/noctalia/settings.toml" ] && [ ! -e "$HOME/.local/state/noctalia/settings.toml" ]; then
-        ln -s "$HOME/NixDOTs/home/${machineName}/dotfiles/noctalia/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
-      fi
-      if [ ! -L "$HOME/.local/state/noctalia/logos" ] && [ ! -d "$HOME/.local/state/noctalia/logos" ]; then
-        ln -s "$HOME/NixDOTs/home/${machineName}/dotfiles/noctalia/logos" "$HOME/.local/state/noctalia/logos"
-      fi
+
+      link() {
+        local src="$1" dst="$2"
+        if [ -L "$dst" ] && [ "$(readlink "$dst")" != "$src" ]; then
+          rm -f "$dst"
+        fi
+        if [ ! -e "$dst" ] && [ ! -L "$dst" ]; then
+          ln -s "$src" "$dst"
+        fi
+      }
+
+      link "$DOTS/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
+      link "$DOTS/logos" "$HOME/.local/state/noctalia/logos"
     fi
   '';
 
   home.activation.copyOutputsConfig = config.lib.dag.entryAfter ["writeBoundary"] ''
     if [ "${machineName}" = "orbiter" ]; then
       HOST="${machineName}"
-      SRC="$HOME/NixDOTs/home/shared/niri/config.d/outputs-$HOST.kdl"
+      SRC="$HOME/nixdots/home/shared/niri/config.d/outputs-$HOST.kdl"
       DST="$HOME/.config/niri/config.d/outputs.kdl"
       mkdir -p "$(dirname "$DST")"
       if [ -f "$SRC" ]; then
