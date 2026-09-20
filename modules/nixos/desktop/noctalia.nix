@@ -3,7 +3,7 @@
 {
   # Live-edit workflow:
   # - Noctalia state is edited in home/orbiter/dotfiles/noctalia/
-  # - Rebuild with: sudo nixos-rebuild switch --flake ~/NixDOTs#orbiter
+  # - Rebuild with: sudo nixos-rebuild switch --flake ~/nixdots#orbiter
 
   services.greetd = {
     enable = true;

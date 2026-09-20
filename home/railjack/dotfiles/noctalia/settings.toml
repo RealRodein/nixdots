@@ -200,10 +200,10 @@ show_dots = true
 show_instance_count = false
 
 [hooks]
-battery_charging = "/home/rodein/NixDOTs/home/dotfiles/my-scripts/toggles-power.sh"
-battery_discharging = "/home/rodein/NixDOTs/home/dotfiles/my-scripts/toggles-save.sh"
-started = "noctalia msg action screen-lock & /home/rodein/NixDOTs/home/dotfiles/my-scripts/startapps.sh"
-colors-changed = "/home/rodein/NixDOTs/home/shared/ghostty/titlebar-sync.sh"
+battery_charging = "/home/rodein/nixdots/home/shared/my-scripts/toggles-power.sh"
+battery_discharging = "/home/rodein/nixdots/home/shared/my-scripts/toggles-save.sh"
+started = "noctalia msg action screen-lock & /home/rodein/nixdots/home/shared/my-scripts/startapps.sh"
+colors-changed = "/home/rodein/nixdots/home/shared/ghostty/titlebar-sync.sh"
 
 [idle]
 behavior_order = [ "lock", "screen-off", "suspend" ]

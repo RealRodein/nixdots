@@ -17,14 +17,14 @@ This flake is organized by host entrypoints under `hosts/<hostname>/`, with reus
 The existing workflow is unchanged:
 
 ```bash
-sudo nixos-rebuild switch --flake ~/NixDOTs#orbiter
+sudo nixos-rebuild switch --flake ~/nixdots#orbiter
 ```
 
 ## Live-edit Noctalia
 
 For quick iterative edits, keep editing Noctalia config directly in:
 
-- `~/NixDOTs/home/orbiter/dotfiles/noctalia/`
+- `~/nixdots/home/orbiter/dotfiles/noctalia/`
 
 Then rebuild with `#orbiter`.
 
