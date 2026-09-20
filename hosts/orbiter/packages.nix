@@ -28,7 +28,10 @@
     # Desktop
     ghostty
     yazi
-    opencode
+
+    #opencode
+    inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.opencode
+
     steam
     gamescope
     prismlauncher
