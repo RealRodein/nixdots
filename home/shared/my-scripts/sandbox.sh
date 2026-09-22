@@ -299,6 +299,10 @@ if [[ -c /dev/nvidia0 ]]; then
     --setenv __NV_PRIME_RENDER_OFFLOAD 1
     --setenv __GLX_VENDOR_LIBRARY_NAME nvidia
   )
+  EGL_JSONS="/run/opengl-driver/share/glvnd/egl_vendor.d/10_nvidia.json:/run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json"
+  if [[ -f /run/opengl-driver/share/glvnd/egl_vendor.d/10_nvidia.json ]]; then
+    NV_PRIME_ENV+=(--setenv __EGL_VENDOR_LIBRARY_FILENAMES "$EGL_JSONS")
+  fi
 fi
 
 # One-shot startup check (cheap - runs once, then gets out of the way).
