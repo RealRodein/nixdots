@@ -57,10 +57,15 @@ window-rule {
 // Twitch Drops Miner: small floating window, fully opaque
 window-rule {
     match app-id=r#"twitch drops miner \(by devilxd\)\.exe"#
-    open-floating true
+    open-floating false
     border { on; }
     default-floating-position x=4 y=45
     default-column-width { fixed 1; }
     default-window-height { fixed 1; }
     opacity 1.0
+}
+
+layer-rule {
+  match namespace="^noctalia-backdrop"
+  place-within-backdrop true
 }

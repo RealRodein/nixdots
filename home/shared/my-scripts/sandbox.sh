@@ -98,6 +98,7 @@ find_candidate_exe() {
   for pat in "${JUNK_EXE_PATTERNS[@]}"; do
     args+=(-not -iname "$pat")
   done
+  args+=(-not -iname '*.so')
   "${args[@]}" -printf '%s\t%p\n' 2>/dev/null | sort -rn | awk -F'\t' 'NR==1{print $2}'
 }
 
@@ -236,6 +237,46 @@ case "${NAME,,}" in
 esac
 
 # ---------------------------------------------------------------------------
+# extra native runtime libs
+# ---------------------------------------------------------------------------
+# The steam-run FHS that supplies our glibc loader carries most desktop
+# libraries, but not NSS/NSPr - which NW.js / CEF / Electron bundles
+# (anything shipping libcef.so or icudtl.dat) dlopen at startup. Realise
+# them once with nix and cache the resulting store dir; /nix/store is
+# already bound read-only inside the box, so it only needs to go on
+# LD_LIBRARY_PATH.
+NATIVE_LIBS_CACHE="$CACHE/sandbox/native-libs.path"
+
+resolve_native_extra_libs() {
+  if [[ -f "$NATIVE_LIBS_CACHE" ]]; then
+    local cached
+    cached="$(<"$NATIVE_LIBS_CACHE")"
+    [[ -e "$cached/lib/libnss3.so" ]] && { printf '%s\n' "$cached"; return 0; }
+  fi
+  command -v nix-build >/dev/null 2>&1 || return 1
+  echo "sandbox: realising extra native libs (nss/nspr), first run only..." >&2
+  local store
+  store="$(nix-build --no-out-link -E '
+    with import <nixpkgs> {};
+    symlinkJoin {
+      name = "sandbox-native-libs";
+      paths = [ nss nspr ];
+    }
+  ' 2>/dev/null | tail -n1)" || return 1
+  [[ -e "$store/lib/libnss3.so" ]] || return 1
+  mkdir -p "${NATIVE_LIBS_CACHE%/*}"
+  printf '%s\n' "$store" > "$NATIVE_LIBS_CACHE"
+  printf '%s\n' "$store"
+}
+
+is_cef_bundle() {
+  [[ -e "$1/libcef.so" || -e "$1/icudtl.dat" || -e "$1/resources.pak" ]] && return 0
+  local f
+  for f in "$1"/chrome_*.pak; do [[ -e "$f" ]] && return 0; done
+  return 1
+}
+
+# ---------------------------------------------------------------------------
 # NixOS dynamic linker resolution
 # ---------------------------------------------------------------------------
 NIXLD_ARGS=()
@@ -255,13 +296,31 @@ case "${NAME,,}" in
       ld="$(ldd "$(command -v bash)" 2>/dev/null | grep -o '/nix/store/.*ld-linux-x86-64.so.2' | head -n1 || true)"
     fi
 
+    extra_libs=""
+    if is_cef_bundle "$PROG_DIR"; then
+      epath="$(resolve_native_extra_libs || true)"
+      if [[ -n "$epath" ]]; then
+        extra_libs="$epath/lib:"
+        echo "sandbox: CEF/NW.js bundle - adding nss/nspr from $epath/lib" >&2
+      fi
+    fi
+
     if [[ -n "$ld" ]]; then
       NIXLD_ARGS=(--ro-bind "$ld" /lib64/ld-linux-x86-64.so.2)
-      libs="/run/opengl-driver/lib:/run/opengl-driver-32/lib:${ld%/*}:/run/current-system/sw/lib${fhs:+:$fhs/usr/lib64}"
+      libs="${extra_libs}/run/opengl-driver/lib:/run/opengl-driver-32/lib:${ld%/*}:/run/current-system/sw/lib${fhs:+:$fhs/usr/lib64}"
       NATIVE_ENV=(--setenv LD_LIBRARY_PATH "$libs" --setenv SANDBOX_NATIVE 1)
       echo "sandbox: native target - binding glibc loader${fhs:+ + steam-run FHS libs}" >&2
     else
       echo "sandbox: warning - no glibc loader found, native launch may fail" >&2
+    fi
+
+    # Chromium/CEF defaults to X11 when it can't see a session type, and the
+    # box has no DISPLAY. Point it at Wayland explicitly (unless the user
+    # asked for X11).
+    if [[ "$OPT_X11" != "1" ]] && is_cef_bundle "$PROG_DIR"; then
+      RUNNER+=(--ozone-platform=wayland)
+      NATIVE_ENV+=(--setenv XDG_SESSION_TYPE wayland)
+      echo "sandbox: CEF/NW.js bundle - forcing wayland ozone platform" >&2
     fi
     ;;
 esac
@@ -456,10 +515,10 @@ else
   fi
 fi
 
-exec bwrap \
+exec setsid bwrap \
   "${SECCOMP_ARGS[@]}" \
   --unshare-all --unshare-user --disable-userns \
-  --new-session --die-with-parent \
+  --new-session \
   --clearenv \
   --proc /proc \
   --ro-bind-try /sys/class/drm /sys/class/drm \
