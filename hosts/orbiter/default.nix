@@ -10,6 +10,9 @@
     # Orbiter live desktop module (Noctalia/Niri).
     ../../modules/nixos/desktop/noctalia.nix
 
+    # Desktop shell module (DankMaterialShell).
+    ../../modules/nixos/desktop/dms.nix
+
     # Shared feature modules.
     ../../modules/nixos/features/gaming.nix
 
