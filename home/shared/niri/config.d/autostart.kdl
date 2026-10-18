@@ -5,7 +5,7 @@
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup
 
-# spawn-sh-at-startup "noctalia > /dev/null 2>&1"
+spawn-sh-at-startup "noctalia > /dev/null 2>&1"
 
 spawn-sh-at-startup "pgrep -x xwayland-satellite >/dev/null || (command -v Xwayland >/dev/null && command -v xwayland-satellite >/dev/null && xwayland-satellite >/dev/null 2>&1 &)"
 

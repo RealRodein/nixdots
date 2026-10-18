@@ -5,7 +5,8 @@ enable_sounds = true
 sound_volume = 0.48999998904764652
 
 [backdrop]
-blur_intensity = 0.0
+blur_intensity = 0.78999998234212399
+enabled = true
 tint_intensity = 0.0
 
 [bar]
@@ -29,10 +30,11 @@ order = [ "Main", "Side" ]
     padding = 0
     radius = 14
     scale = 1.0500000081956387
-    start = [ "Spacer-sides", "launcher", "workspaces", "spacer_1", "media", "bar" ]
-    thickness = 40
+    start = [ "Spacer-sides", "launcher", "workspaces", "spacer_1", "media", "audio_visualizer", "bar" ]
+    thickness = 35
 
     [bar.Side]
+    auto_hide = true
     background_opacity = 0.89999997988343239
     border_width = 1.0
     capsule_thickness = 0.74999998696148396
@@ -49,7 +51,6 @@ order = [ "Main", "Side" ]
     radius_top_right = 0
     reserve_space = false
     show_on_workspace_switch = false
-    smart_auto_hide = true
     start = [ "output_volume", "wallpaper", "widget", "clipboard" ]
     thickness = 40
     widget_spacing = 11
@@ -377,7 +378,6 @@ active_scale = 0.90000001341104507
 background_opacity = 0.88999998010694981
 border_width = 1.0
 cross_axis_padding = 0
-enabled = true
 icon_size = 30
 inactive_opacity = 0.3899999912828207
 inactive_scale = 0.65000000968575478
@@ -660,8 +660,8 @@ builtin = "Ayu"
 community_palette = "ADW"
 custom_palette = "wallhaven-w5mlmp-mc"
 mode = "dark"
+shell_mode = "dark"
 source = "wallpaper"
-wallpaper_scheme = "m3-fruit-salad"
 
     [theme.templates]
     builtin_ids = [ "btop", "gtk3", "gtk4", "ghostty", "niri" ]
@@ -683,13 +683,13 @@ wallpaper_scheme = "m3-fruit-salad"
 directory = "/home/rodein/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-8gr6l2.jpg"
+    path = "/home/rodein/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
 
     [wallpaper.last]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-8gr6l2.jpg"
+    path = "/home/rodein/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-8gr6l2.jpg"
+    path = "/home/rodein/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
 
 [weather]
 auto_locate = true
@@ -707,15 +707,13 @@ max_length = 700
 title_scroll = "always"
 
 [widget.audio_visualizer]
+bands = 25
+color_2 = "tertiary"
 mirrored = false
-show_when_idle = true
-width = 300.0
+width = 100
 
 [widget.bar]
 type = "noctalia/wallpaper_depth:bar"
-
-[widget.clock]
-format = "{:%H:%M}    {:%d.%m}"
 
 [widget.control-center]
 capsule = true
@@ -813,11 +811,12 @@ enabled = false
 type = "ashur-d/wallpaper-widget:widget"
 
 [widget.workspaces]
-active_pill_size = 2.75
+active_pill_size = 3.0
+empty_color = "outline"
 hide_when_empty = true
-inactive_pill_size = 1.05
 max_label_chars = 2
-pill_scale = 0.80000000000000004
+occupied_color = "tertiary"
+pill_scale = 0.59999999999999998
 show_all_outputs = true
 show_labels = false
 show_tooltip = false
