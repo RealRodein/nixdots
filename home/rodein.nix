@@ -165,6 +165,24 @@
       "fontconfig/conf.d/10-hm-fonts.conf" = {
         force = true;
       };
+
+      # Super-key shortcut for the start menu applet. cosmic-settings rewrites
+      # this file whenever a custom shortcut is added in its UI, which would
+      # clobber the managed symlink - force it like mimeapps.list above.
+      #
+      # Must be the modifier-only form (no key): cosmic-comp compares the
+      # modifier state *after* the keypress, so (modifiers: [], key: "Super_L")
+      # never matches a bare Super press, and keyless bindings fire on the
+      # modifier's release. Being equal in modifiers+key, this entry replaces
+      # the default (modifiers: [Super]): System(Launcher) on merge.
+      "cosmic/com.system76.CosmicSettings.Shortcuts/v1/custom" = {
+        force = true;
+        text = ''
+          {
+          (modifiers: [Super]): Spawn("/run/current-system/sw/bin/cosmic-start-menu-applet --toggle"),
+          }
+        '';
+      };
     })
   ];
 

@@ -22,6 +22,12 @@
       url = "github:pabloaul/lsfg-vk-flake/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Classic Start menu for the COSMIC panel
+    cosmic-start-menu-applet = {
+      url = "github:jjnuthuagen/cosmic-start-menu-applet";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, home-manager, lsfg-vk, ... }:

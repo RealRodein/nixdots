@@ -34,6 +34,53 @@
         cosmic-wallpapers
         cosmic-store
         xdg-desktop-portal-cosmic;
+      cosmic-start-menu-applet = prev.rustPlatform.buildRustPackage {
+        pname = "cosmic-start-menu-applet";
+        version = "0.1.0";
+        src = inputs.cosmic-start-menu-applet;
+        cargoHash = "sha256-DIo3vTVyvgmTWcytysJs69srBrJD6jLx9L/c9AXC/0A=";
+
+        nativeBuildInputs = [ prev.pkg-config ];
+        buildInputs = [
+          prev.libxkbcommon
+          prev.wayland
+          prev.expat
+          prev.fontconfig
+          prev.freetype
+          prev.zlib
+        ];
+
+        # wayland-sys is built with its `dlopen` feature, so
+        # libwayland-client.so.0 is loaded at runtime instead of being
+        # linked. The loader then never sees the wayland store path and
+        # winit panics with NoWaylandLib when the panel spawns the applet.
+        postFixup = ''
+          patchelf --add-rpath ${prev.lib.getLib prev.wayland}/lib $out/bin/cosmic-start-menu-applet
+        '';
+        postInstall = ''
+          install -Dm0644 data/io.github.jjnuthuagen.StartMenu.desktop \
+            $out/share/applications/io.github.jjnuthuagen.StartMenu.desktop
+          if [ -f data/io.github.jjnuthuagen.StartMenuSettings.desktop ]; then
+            install -Dm0644 data/io.github.jjnuthuagen.StartMenuSettings.desktop \
+              $out/share/applications/io.github.jjnuthuagen.StartMenuSettings.desktop
+          fi
+
+          # The desktop files ask for Icon=start-here-symbolic, which the
+          # Cosmic theme resolves to its own four-squares app-grid glyph.
+          # Ship the nix flake logo as this app's icon instead and point both
+          # entries at it, so launchers and the panel applet list show proper
+          # branding. The package's share/icons lands in
+          # /run/current-system/sw/share/icons, in every COSMIC process's
+          # XDG_DATA_DIRS; Cosmic inherits hicolor, so lookups reach it.
+          install -Dm0644 \
+            ${../../home/orbiter/dotfiles/noctalia/logos/nix-snowflake-white.svg} \
+            $out/share/icons/hicolor/scalable/apps/io.github.jjnuthuagen.StartMenu.svg
+          substituteInPlace $out/share/applications/io.github.jjnuthuagen.StartMenu.desktop \
+            --replace-fail 'Icon=start-here-symbolic' 'Icon=io.github.jjnuthuagen.StartMenu'
+          substituteInPlace $out/share/applications/io.github.jjnuthuagen.StartMenuSettings.desktop \
+            --replace-fail 'Icon=start-here-symbolic' 'Icon=io.github.jjnuthuagen.StartMenu'
+        '';
+      };
     })
   ];
 
