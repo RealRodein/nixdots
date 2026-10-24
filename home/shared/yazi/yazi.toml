@@ -1,6 +1,10 @@
 [opener]
-zen = [
-  { run = "zen \"$@\"", orphan = true, desc = "Open with Zen" },
+xdg = [
+  { run = "xdg-open \"$@\"", orphan = true, desc = "Open with the default application" },
+]
+
+zathura = [
+  { run = "zathura \"$@\"", orphan = true, desc = "Open in Zathura" },
 ]
 
 pdf_term = [
@@ -8,14 +12,13 @@ pdf_term = [
 ]
 
 media_term = [
-  { run = "mpv --vo=kitty \"$1\" || mpv --vo=tct \"$1\"", block = true, desc = "Play media in terminal" },
+  { run = "mpv --vo=kitty --vo-kitty-use-shm=yes \"$1\" || mpv --vo=tct \"$1\"", block = true, desc = "Play media in terminal" },
 ]
 
 [open]
 prepend_rules = [
-  { mime = "application/pdf", use = "zen" },
+  { mime = "inode/directory", use = "xdg" },
+  { mime = "application/pdf", use = "zathura" },
   { mime = "video/*", use = "media_term" },
   { mime = "audio/*", use = "media_term" },
 ]
-
-

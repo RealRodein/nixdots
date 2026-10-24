@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 {
   # xwayland-satellite 0.8.2 breaks Steam (bug in xwayland-satellite),
   # downgrade to 0.8.1 until upstream fixes it.
@@ -25,37 +25,16 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    # Desktop
-    ghostty
-    yazi
-    inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.opencode
-
+    # Niri session
     xwayland
     xwayland-satellite
-    vesktop
-    pavucontrol
-    mpv
-    mpvpaper
-    wineWow64Packages.waylandFull
-    winetricks
 
     # File manager
-    thunar
+    nautilus
 
-    # Editor
-    zed-editor
-
-    # CLI tools
-    btop
-    git
-    unar
-    neovim
-    lazygit
-    python3
-
-    wtype
-    jq
-    bubblewrap
+    # Windows compatibility
+    wineWow64Packages.waylandFull
+    winetricks
 
     # ASUS
     asusctl
@@ -63,12 +42,5 @@
 
     # Power
     auto-cpufreq
-
-    appimage-run
-    dotnet-runtime_10
-    unzip
-    rpm
-    # Custom
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

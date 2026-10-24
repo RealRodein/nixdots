@@ -24,6 +24,10 @@
 
   # --- System ---
   networking.hostName = "orbiter";
+
+  # File manager integration: removable drives, trash, network mounts.
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
   networking.firewall.allowedTCPPorts = [ 46561 ];
   networking.firewall.allowedUDPPorts = [ 46561 ];
 

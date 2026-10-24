@@ -11,12 +11,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # zen-browser pinned to 771b9a9c: next version requires ffmpeg_9, only available in nixpkgs-unstable
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Lossless Scaling frame generation (Vulkan layer) – needs Lossless Scaling bought on Steam
     lsfg-vk = {
       url = "github:pabloaul/lsfg-vk-flake/main";

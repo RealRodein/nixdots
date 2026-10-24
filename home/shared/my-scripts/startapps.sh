@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
-taskset -c 0-11 steam &
+
+if command -v taskset >/dev/null 2>&1 && [ "$(nproc)" -ge 12 ]; then
+  taskset -c 0-11 steam &
+else
+  steam &
+fi
+
 vesktop &
 rog-control-center &
 
-~/Applications/miner/run.sh & disown
+if [ -x "$HOME/Applications/miner/run.sh" ]; then
+  "$HOME/Applications/miner/run.sh" & disown
+fi

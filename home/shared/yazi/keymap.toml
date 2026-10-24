@@ -25,5 +25,5 @@ prepend_keymap = [
 
   { on = "<C-h>", run = "cd ~", desc = "Go to home directory" },
   { on = "<C-q>", run = "quit", desc = "Quit Yazi" },
-  { on = "m", run = "shell 'mpv --vo=kitty \"$@\" || mpv --vo=tct \"$@\"' --block", desc = "Play in terminal (kitty/tct)" },
+  { on = "m", run = "shell 'mpv --vo=kitty --vo-kitty-use-shm=yes \"$@\" || mpv --vo=tct \"$@\"' --block", desc = "Play in terminal (kitty/tct)" },
 ]

@@ -11,7 +11,7 @@
         cosmic-session
         cosmic-greeter
         cosmic-applets
-        cosmic-applibrary
+        cosmic-app-library
         cosmic-bg
         cosmic-comp
         cosmic-files

@@ -412,7 +412,7 @@ magnification_scale = 1.3500000052154064
 main_axis_padding = 5
 margin_edge = 5
 padding = 1
-pinned = [ "steam", "vesktop", "zen-beta" ]
+pinned = [ "steam", "vesktop", "firefox" ]
 radius = 14
 reserve_space = true
 show_dots = true
@@ -697,9 +697,7 @@ source = "wallpaper"
     community_ids = [
         "opencode",
         "pi-agent",
-        "zen-browser",
         "discord",
-        "neovim",
         "zed",
         "heroiclauncher",
         "prismlauncher",

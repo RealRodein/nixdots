@@ -5,13 +5,12 @@
     # Shared modules for all hosts.
     ../../modules/nixos/base/common.nix
     ../../modules/nixos/packages/common.nix
+    ../../modules/nixos/packages/cli.nix
+    ../../modules/nixos/packages/gui.nix
     ../../modules/nixos/users/rodein-base.nix
 
     # Orbiter live desktop module (Noctalia/Niri).
     ../../modules/nixos/desktop/noctalia.nix
-
-    # Desktop shell module (DankMaterialShell) - disabled, noctalia restored.
-    # ../../modules/nixos/desktop/dms.nix
 
     # Shared feature modules.
     ../../modules/nixos/features/gaming.nix
