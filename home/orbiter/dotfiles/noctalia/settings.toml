@@ -1,4 +1,4 @@
-config_version = 14
+config_version = 15
 
 [audio]
 enable_sounds = true
@@ -19,19 +19,44 @@ order = [ "Main", "Side" ]
     capsule_fill = "secondary"
     capsule_opacity = 0.069999998435378075
     capsule_padding = 12.0
-    capsule_radius = 12
+    capsule_radius = 8
     capsule_thickness = 0.72999998740851879
-    center = [ "active_window" ]
+    center = [ "group:g2" ]
     contact_shadow = true
-    end = [ "tray", "battery", "notifications", "network", "clock", "control-center", "Spacer-sides" ]
+    end = [ "privacy", "tray", "group:g1", "control-center", "Spacer-sides" ]
     font_weight = 400
     margin_edge = 5
     margin_ends = 5
     padding = 0
-    radius = 14
+    radius = 11
     scale = 1.0500000081956387
-    start = [ "Spacer-sides", "launcher", "workspaces", "spacer_1", "media", "audio_visualizer", "bar" ]
+    start = [ "Spacer-sides", "launcher", "workspaces", "spacer_1", "media", "bar" ]
     thickness = 35
+
+        [[bar.Main.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border_width = 1.0
+        enabled = true
+        fill = "secondary"
+        id = "g1"
+        members = [ "battery", "notifications", "network", "clock" ]
+        opacity = 0.070000000298023224
+        padding = 13.0
+        radius = 8.0
+        widget_spacing = 12
+
+        [[bar.Main.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border_width = 1.5
+        enabled = true
+        fill = "primary"
+        id = "g2"
+        members = [ "audio_visualizer", "active_window", "audio_visualizer" ]
+        opacity = 0.070000000298023224
+        padding = 9.0
+        radius = 8.0
 
     [bar.Side]
     auto_hide = true
@@ -107,10 +132,10 @@ widget_order = [
     visible = true
 
     [desktop_widgets.widget.desktop-widget-0000000000000003]
-    box_height = 48.0
-    box_width = 272.0
-    cx = 248.0
-    cy = 960.0
+    box_height = 160.0
+    box_width = 616.0
+    cx = 988.0
+    cy = 520.0
     enabled = false
     flip_x = true
     flip_y = true
@@ -630,6 +655,10 @@ settings_show_advanced = true
 telemetry_enabled = true
 ui_scale = 0.85000000521540642
 
+    [shell.launcher]
+    search_position = "top"
+    width = 680
+
     [shell.panel]
     control_center_placement = "floating"
     launcher_placement = "floating"
@@ -703,11 +732,13 @@ length = 6
 type = "spacer"
 
 [widget.active_window]
+capsule_foreground = "primary"
+capsule_padding = 48
 max_length = 700
 title_scroll = "always"
 
 [widget.audio_visualizer]
-bands = 25
+bands = 20
 color_2 = "tertiary"
 mirrored = false
 width = 100
@@ -761,11 +792,16 @@ scale = 0.69999999999999996
 show_label = false
 
 [widget.privacy]
-active_color = "on_tertiary"
+active_color = "error"
+capsule = true
+capsule_border_width = 0.0
+capsule_opacity = 0.0
+capsule_padding = 4
+capsule_radius = 0
 hide_inactive = true
-icon_spacing = 8
+icon_spacing = 0
 inactive_color = "secondary"
-scale = 1.25
+interactive = false
 
 [widget.ram]
 scale = 0.69999999999999996

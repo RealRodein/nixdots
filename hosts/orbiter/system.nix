@@ -67,7 +67,10 @@
   '';
 
   # --- Kernel ---
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # Pin to 7.2: the pinned NVIDIA 610.57.04 driver does not compile against
+  # linux 7.3 (dmem_cgroup_register_region signature changed in 7.3).
+  # Revisit once a driver supporting 7.3 is pinned above.
+  boot.kernelPackages = pkgs.linuxPackages_7_2;
 
   # --- ASUS / GPU switching ---
   boot.kernelModules = [ "acpi_call" ];
