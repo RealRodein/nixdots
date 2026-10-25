@@ -166,8 +166,10 @@ in
       source = ../shared/my-scripts/sandbox.sh;
       force = true;
     };
-    "my-scripts/sync-flatpak-steam-icons.sh".source =
-      ../shared/my-scripts/sync-flatpak-steam-icons.sh;
+    "my-scripts/sync-flatpak-steam-icons.sh" = {
+      source = ../shared/my-scripts/sync-flatpak-steam-icons.sh;
+      force = true;
+    };
 
     "MangoHud/MangoHud.conf".source = ../shared/mangohud/MangoHud.conf;
   };

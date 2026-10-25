@@ -93,13 +93,48 @@ JUNK_EXE_PATTERNS=(
   '*battleye*' '*easyanticheat*' '*eac_launcher*'
 )
 
+# A launchable file must at least be non-empty. A 0-byte "exe" is the classic
+# symptom of a failed/interrupted archive extraction, and wine reports it only
+# as the very unhelpful "ShellExecuteEx failed: File not found." Prefer a
+# candidate whose header actually looks executable.
+is_plausible_executable() {
+  local f="$1" size magic
+  size="$(stat -c %s -- "$f" 2>/dev/null || echo 0)"
+  [[ "$size" -gt 0 ]] || return 1
+  magic="$(head -c 4 -- "$f" 2>/dev/null | od -An -tx1 | tr -d ' \n')"
+  case "${f,,}" in
+    *.exe|*.msi)
+      # MZ for PE, d0cf11e0 for OLE/MSI
+      [[ "$magic" == 4d5a* || "$magic" == d0cf11e0* ]]
+      ;;
+    *.bat|*.cmd)
+      return 0
+      ;;
+    *)
+      # ELF (7f454c46) or a shebang script (#!)
+      [[ "$magic" == 7f454c46 || "$magic" == 2321* ]]
+      ;;
+  esac
+}
+
 find_candidate_exe() {
   local args=(find "$1" -maxdepth "$2" -type f \( -iname '*.exe' -o -iname '*.x86_64' -o -iname '*.x86' -o -iname '*.linux' -o -iname '*.elf' -o -iname '*.run' -o -iname '*.appimage' -o -perm -u+x \))
   for pat in "${JUNK_EXE_PATTERNS[@]}"; do
     args+=(-not -iname "$pat")
   done
   args+=(-not -iname '*.so')
-  "${args[@]}" -printf '%s\t%p\n' 2>/dev/null | sort -rn | awk -F'\t' 'NR==1{print $2}'
+  local best="" sz p
+  while IFS=$'\t' read -r sz p; do
+    [[ -n "$best" ]] || best="$p"
+    if is_plausible_executable "$p"; then
+      printf '%s\n' "$p"
+      return 0
+    fi
+  done < <("${args[@]}" -printf '%s\t%p\n' 2>/dev/null | sort -rn)
+  # No valid candidate: return the largest anyway so the picker still lists
+  # the folder and the launch preflight can explain what is wrong with it.
+  [[ -n "$best" ]] && printf '%s\n' "$best"
+  return 0
 }
 
 scan_programs() {
@@ -216,6 +251,48 @@ fi
 
 PROG_DIR="$(dirname "$TARGET")"
 NAME="${TARGET##*/}"
+
+preflight_target() {
+  local t="$1" size a
+  size="$(stat -c %s -- "$t" 2>/dev/null || echo 0)"
+
+  if [[ "$size" -eq 0 ]]; then
+    echo "sandbox: refusing to launch: $NAME is 0 bytes." >&2
+    echo "         that is almost always an unfinished or failed archive extraction." >&2
+    local -a archives=()
+    while IFS= read -r -d '' a; do archives+=("$a"); done < <(
+      find "$PROG_DIR" -maxdepth 1 -type f \
+        \( -iname '*.rar' -o -iname '*.7z' -o -iname '*.zip' \
+           -o -iname '*.tar' -o -iname '*.tar.*' -o -iname '*.tgz' \) -print0 2>/dev/null
+    )
+    if (( ${#archives[@]} > 0 )); then
+      for a in "${archives[@]}"; do
+        echo "         archive next to it: ${a##*/}" >&2
+      done
+      echo "         extract it first, e.g.:" >&2
+      echo "           unrar x '${archives[0]}'" >&2
+      echo "         on NixOS: NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#unrar -c unrar x '${archives[0]}'" >&2
+      echo "         note: p7zip 17.05 and some GUI/7-Zip builds cannot read this RAR variant; use unrar." >&2
+    fi
+    exit 1
+  fi
+
+  if ! is_plausible_executable "$t"; then
+    echo "sandbox: refusing to launch: $NAME does not look like a valid executable." >&2
+    echo "         first bytes: $(head -c 4 -- "$t" 2>/dev/null | od -An -tc | tr -s ' ')" >&2
+    exit 1
+  fi
+}
+
+preflight_target "$TARGET"
+
+# NW.js keeps the actual game payload in package.nw; an empty one fails
+# later with a much less obvious error than a preflight message.
+if [[ "${NAME,,}" == "nw.exe" && -e "$PROG_DIR/package.nw" && ! -s "$PROG_DIR/package.nw" ]]; then
+  echo "sandbox: refusing to launch: package.nw is empty (failed extraction)." >&2
+  exit 1
+fi
+
 echo "sandbox: launching $NAME" >&2
 echo "         from: $PROG_DIR (mounted as /program)" >&2
 
@@ -441,16 +518,51 @@ fi
 # ---------------------------------------------------------------------------
 # seccomp filter extraction
 # ---------------------------------------------------------------------------
+# ctypes.util.find_library() only searches the loader cache, which on NixOS
+# often does not include libseccomp even when it is in /nix/store. Find it
+# ourselves so the deny-list is not silently skipped.
+find_libseccomp() {
+  local p bits cls magic
+  bits="$(python3 -c 'import struct; print(struct.calcsize("P") * 8)' 2>/dev/null || echo 64)"
+  cls=02; [[ "$bits" == 32 ]] && cls=01
+  if command -v ldconfig >/dev/null 2>&1; then
+    p="$(ldconfig -p 2>/dev/null | awk '/libseccomp\.so\.2([[:space:]]|$)/{print $NF; exit}')"
+    [[ -n "$p" && -e "$p" ]] && { printf '%s\n' "$p"; return 0; }
+  fi
+  for p in /nix/store/*libseccomp-*-lib/lib/libseccomp.so.2 /nix/store/*-libseccomp-*/lib/libseccomp.so.2; do
+    [[ -e "$p" ]] || continue
+    # Match the pointer width of the python3 that will dlopen it; /nix/store
+    # often contains both 32- and 64-bit builds of the same library.
+    magic="$(head -c 5 -- "$p" 2>/dev/null | od -An -tx1 | tr -d ' \n')"
+    [[ "$magic" == "7f454c46$cls" ]] || continue
+    printf '%s\n' "$p"; return 0
+  done
+  return 1
+}
+
 SECCOMP_ARGS=()
 if [[ "$OPT_SECCOMP" == "1" ]] && command -v python3 >/dev/null 2>&1; then
   SECCOMP_BPF="$(mktemp "${RUNTIME}/sandbox-seccomp.XXXXXX")"
+  SECCOMP_LIB="$(find_libseccomp || true)"
 
-  if python3 - "$SECCOMP_BPF" <<'PYEOF' 2>/dev/null
+  if python3 - "$SECCOMP_BPF" "$SECCOMP_LIB" <<'PYEOF' 2>/dev/null
 import ctypes, ctypes.util, os, sys
 
 out_path = sys.argv[1]
-libname = ctypes.util.find_library("seccomp") or "libseccomp.so.2"
-lib = ctypes.CDLL(libname)
+candidates = []
+if len(sys.argv) > 2 and sys.argv[2]:
+    candidates.append(sys.argv[2])
+candidates.append(ctypes.util.find_library("seccomp") or "libseccomp.so.2")
+
+lib = None
+for libname in candidates:
+    try:
+        lib = ctypes.CDLL(libname)
+        break
+    except OSError:
+        continue
+if lib is None:
+    sys.exit(1)
 
 SCMP_ACT_ALLOW = 0x7fff0000
 EPERM = 1
@@ -468,6 +580,18 @@ lib.seccomp_release.argtypes = [ctypes.c_void_p]
 
 ctx = lib.seccomp_init(SCMP_ACT_ALLOW)
 if not ctx: sys.exit(1)
+
+# libseccomp's default action for a syscall from a different ABI is KILL,
+# so a filter built for x86_64 silently kills 32-bit Wine/NW.js games. Add
+# the i386 ABI; seccomp_rule_add() then applies each rule to every arch in
+# the filter (the per-arch syscall numbers are resolved by libseccomp).
+SCMP_ARCH_X86_64 = 0xc000003e
+SCMP_ARCH_X86 = 0x40000003
+lib.seccomp_arch_native.restype = ctypes.c_uint32
+lib.seccomp_arch_add.restype = ctypes.c_int
+lib.seccomp_arch_add.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+if lib.seccomp_arch_native() == SCMP_ARCH_X86_64:
+    lib.seccomp_arch_add(ctx, SCMP_ARCH_X86)
 
 DENY = [
     "ptrace", "process_vm_readv", "process_vm_writev",
@@ -515,10 +639,11 @@ else
   fi
 fi
 
-exec setsid bwrap \
+exec setsid --wait bwrap \
   "${SECCOMP_ARGS[@]}" \
   --unshare-all --unshare-user --disable-userns \
   --new-session \
+  --die-with-parent \
   --clearenv \
   --proc /proc \
   --ro-bind-try /sys/class/drm /sys/class/drm \

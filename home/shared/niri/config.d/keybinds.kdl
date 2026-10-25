@@ -20,7 +20,6 @@ binds {
     Mod+S hotkey-overlay-title="Steam" { spawn-sh "taskset -c 0-11 ~/.config/niri/config.d/focus-or-spawn.sh steam steam"; }
     Mod+D hotkey-overlay-title="Vesktop" { spawn-sh "~/.config/niri/config.d/focus-or-spawn.sh vesktop vesktop"; }
     Mod+W hotkey-overlay-title="Firefox" { spawn-sh "~/.config/niri/config.d/focus-or-spawn.sh firefox firefox"; }
-    Mod+Shift+W hotkey-overlay-title="Chromium" { spawn-sh "~/.config/niri/config.d/focus-or-spawn.sh chromium chromium"; }
     Mod+C hotkey-overlay-title="Zed Editor" { spawn-sh "~/.config/niri/config.d/focus-or-spawn.sh zed zeditor"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
@@ -49,7 +48,6 @@ binds {
 
     // added
     Mod+E hotkey-overlay-title="File Manager" { spawn-sh "~/.config/niri/config.d/focus-or-spawn.sh nautilus nautilus"; }
-    Mod+Y hotkey-overlay-title="Yazi" { spawn-sh "ghostty -e yazi"; }
 
     Mod+Q repeat=false { spawn-sh "~/.config/niri/config.d/close-or-tab.sh"; }
 
@@ -60,7 +58,7 @@ binds {
     Mod+Ctrl+Left { move-column-left; }
     Mod+Ctrl+Right { move-column-right; }
 
-    Mod+L { spawn "noctalia" "msg" "screen-lock"; }
+    Mod+L { spawn "noctalia" "msg" "session" "lock"; }
     Mod+Shift+R hotkey-overlay-title="Reload Noctalia Config" { spawn "noctalia" "msg" "config-reload"; }
 
 

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, machineName, ... }:
 
 {
   programs.firefox = {
@@ -8,6 +8,9 @@
     profiles.default = {
       id = 0;
       name = "default";
+      # Match the profile Firefox created on this machine so Home Manager's
+      # generated profiles.ini points at the existing profile data.
+      path = if machineName == "orbiter" then "26y8fenx.default" else "default";
       isDefault = true;
 
       settings = {
@@ -42,4 +45,8 @@
       };
     };
   };
+
+  # Firefox rewrites profiles.ini itself; keep the Home Manager copy
+  # authoritative so activation doesn't fail on the existing file.
+  home.file.".config/mozilla/firefox/profiles.ini".force = true;
 }
