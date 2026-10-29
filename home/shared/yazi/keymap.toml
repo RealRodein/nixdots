@@ -11,7 +11,7 @@ prepend_keymap = [
   { on = "<C-e>", run = "shell '$EDITOR \"$@\"' --block", desc = "Edit in current terminal" },
   { on = "<C-o>", run = "open --interactive", desc = "Open with..." },
 
-  { on = "<C-c>", run = "yank", desc = "Copy selected" },
+  { on = "<C-c>", run = "quit", desc = "Quit Yazi" },
   { on = "<C-x>", run = "yank --cut", desc = "Cut selected" },
   { on = "<C-v>", run = "paste", desc = "Paste copied/cut files" },
   { on = "<C-d>", run = "remove", desc = "Move selected to trash" },
@@ -22,6 +22,7 @@ prepend_keymap = [
   { on = "<C-.>", run = "hidden toggle", desc = "Toggle hidden files" },
   { on = "<C-f>", run = "find --smart", desc = "Find in current folder" },
   { on = "<C-/>", run = "search --via=rg", desc = "Search recursively" },
+  { on = "<C-t>", run = "terminal", desc = "Open terminal in current place" },
 
   { on = "<C-h>", run = "cd ~", desc = "Go to home directory" },
   { on = "<C-q>", run = "quit", desc = "Quit Yazi" },
