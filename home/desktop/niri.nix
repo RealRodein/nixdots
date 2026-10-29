@@ -34,14 +34,6 @@
       source = ../shared/niri/config.d/close-or-tab.sh;
       force = true;
     };
-
-    "systemd/user/niri.service.d/ld-library-path.conf" = {
-      force = true;
-      text = ''
-        [Service]
-        Environment=LD_LIBRARY_PATH=${pkgs.gcc.cc.lib}/lib:${pkgs.zlib}/lib
-      '';
-    };
   };
 
   home.activation.copyOutputsConfig = config.lib.dag.entryAfter [ "writeBoundary" ] ''
