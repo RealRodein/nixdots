@@ -19,10 +19,9 @@ order = [ "Main", "Side" ]
     capsule_fill = "secondary"
     capsule_opacity = 0.069999998435378075
     capsule_padding = 12.0
-    capsule_radius = 8
+    capsule_radius = 6
     capsule_thickness = 0.72999998740851879
     center = [ "group:g2" ]
-    contact_shadow = true
     end = [ "privacy", "tray", "group:g1", "control-center", "Spacer-sides" ]
     font_weight = 400
     margin_edge = 5
@@ -30,7 +29,7 @@ order = [ "Main", "Side" ]
     padding = 0
     radius = 11
     scale = 1.0500000081956387
-    start = [ "Spacer-sides", "launcher", "workspaces", "spacer_1", "media", "bar" ]
+    start = [ "Spacer-sides", "launcher", "group:g3", "spacerrr", "group:g4" ]
     thickness = 35
 
         [[bar.Main.capsule_group]]
@@ -53,32 +52,58 @@ order = [ "Main", "Side" ]
         enabled = true
         fill = "primary"
         id = "g2"
-        members = [ "audio_visualizer", "active_window", "audio_visualizer" ]
+        members = [ "active_window" ]
         opacity = 0.070000000298023224
         padding = 9.0
         radius = 8.0
 
+        [[bar.Main.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border = ""
+        border_width = 0.0
+        enabled = true
+        fill = "secondary"
+        id = "g3"
+        members = [ "text_workspaces-l", "workspaces", "text_workspaces-r" ]
+        opacity = 0.070000000298023224
+        padding = 9.0
+        radius = 6.0
+        widget_spacing = 4
+
+        [[bar.Main.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border_width = 1.0
+        enabled = true
+        fill = "secondary"
+        id = "g4"
+        members = [ "media", "text_-", "audio_visualizer" ]
+        opacity = 0.070000000298023224
+        padding = 12.0
+        radius = 8.0
+
     [bar.Side]
     auto_hide = true
-    background_opacity = 0.89999997988343239
+    background_opacity = 0.74999998323619366
     border_width = 1.0
+    capsule_radius = 7
     capsule_thickness = 0.74999998696148396
     center = [ "session" ]
-    contact_shadow = true
     end = [ "screenshot", "mpvpaper", "sysmon" ]
     font_weight = 400
-    margin_edge = 0
+    margin_edge = 2
     margin_ends = 390
     padding = 15
     position = "right"
-    radius = 19
-    radius_bottom_right = 0
-    radius_top_right = 0
     reserve_space = false
     show_on_workspace_switch = false
     start = [ "output_volume", "wallpaper", "widget", "clipboard" ]
     thickness = 40
     widget_spacing = 11
+
+[battery]
+warning_threshold = 20
 
 [brightness]
 minimum_brightness = 0.0099999997764825821
@@ -132,17 +157,16 @@ widget_order = [
     visible = true
 
     [desktop_widgets.widget.desktop-widget-0000000000000003]
-    box_height = 160.0
-    box_width = 616.0
-    cx = 988.0
-    cy = 520.0
-    enabled = false
+    box_height = 24.0
+    box_width = 1880.0
+    cx = 972.0
+    cy = 48.0
     flip_x = true
     flip_y = true
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
-    rotation = -3.1415927410125732
+    rotation = 0.0
     type = "audio_visualizer"
 
         [desktop_widgets.widget.desktop-widget-0000000000000003.settings]
@@ -150,13 +174,13 @@ widget_order = [
         background_opacity = 0.0
         background_padding = 0.0
         background_radius = 0.0
-        bands = 40
+        bands = 128
         centered = false
-        color_1 = "tertiary"
-        color_2 = "secondary"
+        color_1 = "primary"
+        color_2 = "tertiary"
         high_color = "secondary"
         low_color = "primary"
-        mirrored = false
+        mirrored = true
         reversed = false
         show_when_idle = true
 
@@ -165,6 +189,7 @@ widget_order = [
     box_width = 216.0
     cx = 1748.0
     cy = 136.0
+    enabled = false
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -176,7 +201,7 @@ widget_order = [
         background_opacity = 0.75
         background_padding = 9
         background_radius = 22
-        color = "tertiary"
+        color = "primary"
         font_family = "JetBrainsMono NFM"
         forecast_days = 2
         shadow = true
@@ -187,6 +212,7 @@ widget_order = [
     box_width = 192.0
     cx = 1504.0
     cy = 1052.0
+    enabled = false
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -212,6 +238,7 @@ widget_order = [
     box_width = 192.0
     cx = 1728.0
     cy = 1052.0
+    enabled = false
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -234,6 +261,7 @@ widget_order = [
     box_width = 304.0
     cx = 248.0
     cy = 1048.0
+    enabled = false
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -380,6 +408,7 @@ widget_order = [
     box_width = 1920.0
     cx = 960.0
     cy = 1168.0
+    enabled = false
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -399,24 +428,23 @@ widget_order = [
         show_when_idle = true
 
 [dock]
-active_scale = 0.90000001341104507
-background_opacity = 0.88999998010694981
-border_width = 1.0
+active_scale = 0.95000001415610313
+auto_hide = true
+background_opacity = 0.74999998323619366
+border_width = 0.5
 cross_axis_padding = 0
-icon_size = 30
-inactive_opacity = 0.3899999912828207
+enabled = true
+icon_size = 25
+inactive_opacity = 0.4999999888241291
 inactive_scale = 0.65000000968575478
 item_spacing = 0
-magnification = false
-magnification_scale = 1.3500000052154064
+magnification_scale = 1.3000000044703484
 main_axis_padding = 5
 margin_edge = 5
 padding = 1
 pinned = [ "steam", "vesktop", "firefox" ]
-radius = 14
-reserve_space = true
-show_dots = true
-show_instance_count = false
+radius = 12
+reserve_space = false
 
 [hooks]
 battery_charging = "/home/rodein/nixdots/home/shared/my-scripts/toggles-power.sh"
@@ -633,7 +661,7 @@ manager_layer = "overlay"
 panel_placement = "floating"
 
 [plugins]
-enabled = [ "noctalia/mpvpaper" ]
+enabled = [ "noctalia/mpvpaper", "yocraft/desktop-launcher" ]
 
     [[plugins.source]]
     kind = "git"
@@ -651,12 +679,20 @@ corner_radius_scale = 1.1000000163912773
 font_family = "JetBrainsMono Nerd Font Mono"
 lang = "en"
 niri_overview_type_to_launch_enabled = true
+screen_time_enabled = true
 settings_show_advanced = true
 telemetry_enabled = true
 ui_scale = 0.85000000521540642
 
+    [shell.animation]
+    speed = 0.7500000111758709
+
     [shell.launcher]
+    category_icons_only = true
+    compact = true
+    layout = "simple"
     search_position = "top"
+    show_app_actions = true
     width = 680
 
     [shell.panel]
@@ -674,6 +710,46 @@ ui_scale = 0.85000000521540642
     [shell.screen_corners]
     enabled = true
     size = 25
+
+    [shell.session]
+    grid = true
+    grid_columns = 2
+    show_shortcuts = false
+
+        [[shell.session.actions]]
+        action = "lock"
+        countdown_seconds = 0.0
+        enabled = false
+        shortcut = "1"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "logout"
+        countdown_seconds = 0.0
+        enabled = true
+        shortcut = "2"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "lock_and_suspend"
+        countdown_seconds = 0.0
+        enabled = true
+        shortcut = "3"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "reboot"
+        countdown_seconds = 0.0
+        enabled = true
+        shortcut = "4"
+        variant = "default"
+
+        [[shell.session.actions]]
+        action = "shutdown"
+        countdown_seconds = 0.0
+        enabled = true
+        shortcut = "5"
+        variant = "destructive"
 
     [shell.shadow]
     alpha = 0.47999998927116394
@@ -694,37 +770,27 @@ source = "wallpaper"
 
     [theme.templates]
     builtin_ids = [ "btop", "gtk3", "gtk4", "ghostty", "niri" ]
-    community_ids = [
-        "opencode",
-        "pi-agent",
-        "discord",
-        "zed",
-        "heroiclauncher",
-        "prismlauncher",
-        "velo",
-        "lazygit",
-        "yazi"
-    ]
+    community_ids = [ "opencode", "pi-agent", "discord", "zed", "heroiclauncher", "prismlauncher", "velo", "lazygit", "yazi" ]
 
 [wallpaper]
 directory = "/home/rodein/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
+    path = "/home/rodein/Pictures/Wallpapers/3s3iirbqnbvh1.png"
 
     [wallpaper.last]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
+    path = "/home/rodein/Pictures/Wallpapers/3s3iirbqnbvh1.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
+    path = "/home/rodein/Pictures/Wallpapers/3s3iirbqnbvh1.png"
 
 [weather]
 auto_locate = true
 
 [widget.Spacer-sides]
-capsule = true
 capsule_opacity = 0.0
 capsule_padding = 0
+capsule_radius = 6
 interactive = false
 length = 6
 type = "spacer"
@@ -739,10 +805,7 @@ title_scroll = "always"
 bands = 20
 color_2 = "tertiary"
 mirrored = false
-width = 100
-
-[widget.bar]
-type = "noctalia/wallpaper_depth:bar"
+width = 60
 
 [widget.control-center]
 capsule = true
@@ -757,7 +820,7 @@ stat = "cpu_temp"
 [widget.launcher]
 capsule = true
 capsule_opacity = 0.0
-capsule_radius = 9
+capsule_radius = 6
 custom_image = "/home/rodein/.local/state/noctalia/logos/nix-snowflake-white.svg"
 scale = 1.1000000000000001
 
@@ -765,7 +828,6 @@ scale = 1.1000000000000001
 art_size = 36.0
 capsule_padding = 4.0
 capsule_radius = 10
-enabled = false
 hide_when_no_media = true
 max_length = 400
 min_length = 0
@@ -797,7 +859,7 @@ capsule_opacity = 0.0
 capsule_padding = 4
 capsule_radius = 0
 hide_inactive = true
-icon_spacing = 0
+icon_spacing = 5
 inactive_color = "secondary"
 interactive = false
 
@@ -817,15 +879,15 @@ capsule = true
 capsule_fill = "secondary"
 capsule_opacity = 0.070000000000000007
 capsule_padding = 17.0
-capsule_radius = 7
-scale = 1.55
-
-[widget.spacer_1]
-length = 10
-type = "spacer"
+capsule_radius = 6
+scale = 1.5
 
 [widget.spacer_2]
 scale = 0.5
+type = "spacer"
+
+[widget.spacerrr]
+scale = 0.75
 type = "spacer"
 
 [widget.sysmon]
@@ -833,6 +895,28 @@ glyph = "activity"
 label_min_width = 200
 show_value = true
 visualization = "none"
+
+[widget.text_-]
+text = "-"
+type = "text"
+
+[widget.text_workspaces-l]
+capsule_opacity = 0.0
+capsule_radius = "auto"
+color = "primary"
+font_scale = 0.96999999999999997
+interactive = false
+scale = 1.2
+text = "["
+type = "text"
+
+[widget.text_workspaces-r]
+color = "primary"
+font_scale = 0.95999999999999996
+interactive = false
+scale = 1.2
+text = "]"
+type = "text"
 
 [widget.tray]
 capsule = true
@@ -845,12 +929,16 @@ enabled = false
 type = "ashur-d/wallpaper-widget:widget"
 
 [widget.workspaces]
-active_pill_size = 3.0
+active_pill_size = 3.1000000000000001
+capsule = false
+capsule_padding = 2
 empty_color = "outline"
-hide_when_empty = true
-max_label_chars = 2
+font_family = "JetBrainsMono NFM Medium"
+font_scale = 0.98999999999999999
+interactive = false
+max_label_chars = 3
 occupied_color = "tertiary"
-pill_scale = 0.59999999999999998
+pill_scale = 0.40000000000000002
 show_all_outputs = true
-show_labels = false
 show_tooltip = false
+style = "minimal"
