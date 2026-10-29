@@ -65,7 +65,30 @@ window-rule {
     opacity 1.0
 }
 
+// Steam: launch as tiled (non-floating) window
+window-rule {
+    match app-id="steam"
+    open-floating false
+}
+
 layer-rule {
   match namespace="^noctalia-backdrop"
   place-within-backdrop true
+}
+
+// Noctalia panel/bar transparency and xray settings
+// transparency .75, xray false (see windows underneath but still blurred)
+layer-rule {
+  match namespace="^noctalia-bar-"
+  background-effect {
+    xray false
+  }
+}
+
+// Ensure consistent blur for noctalia panels
+blur {
+  passes 2
+  offset 3.0
+  noise 0.03
+  saturation 1.0
 }
