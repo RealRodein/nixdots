@@ -14,6 +14,7 @@
 
     # Shared feature modules.
     ../../modules/nixos/features/gaming.nix
+    ../../modules/nixos/features/tailscale.nix
 
     # Host-local modules (keep hardware local to host).
     ./hardware.nix
