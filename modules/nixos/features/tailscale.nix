@@ -26,3 +26,4 @@
   #    After first run, set the operator with:
   #    `sudo tailscale set --operator=$USER`
   #    This enables the tray client to manage Tailscale without sudo.
+}

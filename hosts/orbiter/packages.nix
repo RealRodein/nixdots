@@ -42,5 +42,8 @@
 
     # Power
     auto-cpufreq
+
+    # Wallpaper engine
+    linux-wallpaperengine
   ];
 }
