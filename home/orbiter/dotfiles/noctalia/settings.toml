@@ -75,7 +75,7 @@ order = [ "Main", "Side" ]
         accordion = true
         accordion_direction = "end"
         border_width = 1.0
-        enabled = true
+        enabled = false
         fill = "secondary"
         id = "g4"
         members = [ "media", "text_-", "audio_visualizer" ]
@@ -853,13 +853,13 @@ wallpaper_scheme = "m3-content"
 directory = "/home/rodein/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-9or96k.jpg"
+    path = "/home/rodein/Pictures/Wallpapers/wallhaven-rqjj3j.png"
 
     [wallpaper.last]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-9or96k.jpg"
+    path = "/home/rodein/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_musashi_soul_of_the_katana_vagabond_moewalls_com_mp4.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rodein/Pictures/Wallpapers/wallhaven-9or96k.jpg"
+    path = "/home/rodein/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_musashi_soul_of_the_katana_vagabond_moewalls_com_mp4.jpg"
 
 [weather]
 auto_locate = true
