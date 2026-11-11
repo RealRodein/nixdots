@@ -21,6 +21,23 @@
 #   --debug / --no-debug               verbose Mesa/EGL/Vulkan runtime logging (default: off)
 #   -h / --help                        print this usage and exit
 
+# --- Packages that could be removed/disabled from nix config ---
+# The following nix packages are referenced in the config because of this
+# script's capabilities, but could potentially be removed/disabled:
+#   - bubblewrap (bwrap): Core sandbox mechanism used by this script.
+#     (found in: modules/nixos/packages/cli.nix) - script requires this
+#   - nwjs, electron, seccomp: Runtime support built into script flags.
+#     Does not require specific nix package enablement.
+#   - winetricks: Included in gaming config; may not be needed if not using
+#     proton-ge or Windows executables via this script.
+#   - WARNING: Do NOT remove 'steam' or steam-related packages from gaming.nix
+#     as they are implicitly used/required by Steam/Proton pipeline.
+#     (found in: modules/nixos/features/gaming.nix)
+#   - Gaming packages (gamescope, mangohud, heroic, prismlauncher) from
+#     gaming.nix are NOT directly required by this script and could be
+#     removed/disabled if desired.
+# --- END package removal notes ---
+
 set -euo pipefail
 
 CACHE="${XDG_CACHE_HOME:-$HOME/.cache}"
