@@ -34,7 +34,6 @@
 
     # Windows compatibility
     wineWow64Packages.waylandFull
-    winetricks
 
     # ASUS
     asusctl
@@ -43,7 +42,6 @@
     # Power
     auto-cpufreq
 
-    # Wallpaper engine
-    linux-wallpaperengine
+    
   ];
 }
