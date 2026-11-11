@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# gamemoderunexec - wraps commands with GameMode, NVIDIA offload, and MangoHud
+#
+# Usage: gamemoderunexec [options] -- <command> [args...]
+# Or:    gamemoderunexec <command> [args...]
+
+set -euo pipefail
+
+# Parse arguments: everything after -- is the command to run
+# If no --, use remaining args as command
+if [[ "$1" == "--" ]]; then
+    shift
+    COMMAND="$@"
+else
+    COMMAND="$@"
+fi
+
+# Run the command with GameMode via gamemoderun, NVIDIA offload, and MangoHud
+# The __NV_PRIME_RENDER_OFFLOAD=1 forces NVIDIA GPU rendering
+# __GLX_VENDOR_LIBRARY_NAME=nvidia ensures proper vendor selection
+# mangohud enables the HUD with early frame pacing
+gamemoderun __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia mangohud early_frame_pacing=1 $COMMAND
