@@ -18,6 +18,10 @@
       source = ../shared/my-scripts/toggles-save.sh;
       force = true;
     };
+    "my-scripts/toggle-rog-cc.sh" = {
+      source = ../shared/my-scripts/toggle-rog-cc.sh;
+      force = true;
+    };
   };
 
   home.activation.copyRogConfig = config.lib.dag.entryAfter [ "writeBoundary" ] ''

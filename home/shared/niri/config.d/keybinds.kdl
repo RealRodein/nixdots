@@ -33,7 +33,7 @@ binds {
 
     XF86AudioMicMute     allow-when-locked=true { spawn "noctalia" "msg" "media" "toggle"; }
 
-    XF86Launch1 { spawn "rog-control-center"; }
+    //XF86Launch1 { spawn "rog-control-center"; }
 
     // ASUS / function keys
     XF86KbdBrightnessDown { spawn "asusctl" "leds" "prev"; }
@@ -46,10 +46,10 @@ binds {
     // Presentation key emits Super+P on this laptop (Windows "display/project" key)
     Mod+P hotkey-overlay-title="Resources" { spawn "resources"; }
 
-    // TODO: no distinct key events captured for these (pointer scroll / firmware-handled):
-    // - F4 (Aura):  asusctl aura effect --next-mode
-    // - F5 (Fan/profile):  asusctl profile next && noctalia msg notification-show "Power Profile" "$(asusctl profile get)"
-    // - M4 (Armoury Crate): rog-control-center (XF86Launch1 above may already be correct)
+    // Mapped from Asus Keyboard scroll events via evsieve (asus-fn-scroll-evsieve.service)
+    F18 hotkey-overlay-title="Aura Mode Next" { spawn-sh "asusctl aura effect --next-mode"; }
+    F19 hotkey-overlay-title="Profile Next" { spawn-sh "asusctl profile next && noctalia msg notification-show 'Power Profile' \"$(asusctl profile get)\""; }
+    F20 hotkey-overlay-title="ROG Control Center" { spawn-sh "~/.config/my-scripts/toggle-rog-cc.sh"; }
 
     // Media keys via noctalia
     XF86AudioPlay  allow-when-locked=true { spawn "noctalia" "msg" "media" "toggle"; }
