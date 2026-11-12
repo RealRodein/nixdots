@@ -20,7 +20,6 @@
     "vt.global_cursor_default=0"
     "nowatchdog"
     "intel_pstate=no_turbo"
-    "snd.hda_intel.model=asus-headset-mic"
   ];
 
   # --- System ---
@@ -113,11 +112,11 @@
     };
   };
 
-  # Headset microphone auto-switcher for Realtek ALC285 codecs
-  services.udev.extraRules = ''
-    SUBSYSTEM=="sound", ENV{ID_JACK_HEADSET}=="1", RUN+="/bin/sh -c '/home/rodein/bin/headset-mic-switcher.sh'"
-    SUBSYSTEM=="sound", ENV{ID_JACK_HEADPHONE}=="1", RUN+="/bin/sh -c '/home/rodein/bin/headset-mic-switcher.sh'"
-  '';
+  # Headset microphone hotplug is handled natively by PipeWire/WirePlumber:
+  # the ALC285 exposes an "analog-input-mic" route that becomes available when
+  # the combo jack detects a mic, and the existing source node switches to it.
+  # No udev rule or userspace script is needed (HDA jack events are not
+  # emitted as sound-subsystem udev events anyway).
 
   system.stateVersion = "26.05";
 }
