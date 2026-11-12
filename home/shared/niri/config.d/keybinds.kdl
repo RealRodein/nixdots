@@ -39,16 +39,17 @@ binds {
     XF86KbdBrightnessDown { spawn "asusctl" "leds" "prev"; }
     XF86KbdBrightnessUp   { spawn "asusctl" "leds" "next"; }
 
-    // Touchpad toggle (F10). Niri has no built-in runtime toggle action yet;
-    // this sends a notification. Add a device-specific toggle command if needed.
-    XF86TouchpadToggle { spawn-sh "notify-send 'Touchpad toggled' || true"; }
+    // Touchpad toggle (F10 / keycode 191 / F21)
+    XF86TouchpadToggle { spawn-sh "~/.config/my-scripts/toggle-touchpad.sh"; }
+    F21                { spawn-sh "~/.config/my-scripts/toggle-touchpad.sh"; }
 
-    // TODO: map from wev captures when keysyms are identified (some keys emitted
-    // Super+P / pointer events in testing, so they may need firmware/hwdb remapping):
-    // - F4:  asusctl aura effect --next-mode
-    // - F5:  asusctl profile next  (+ Noctalia notification with `asusctl profile get`)
-    // - F9:  spawn "resources" (presentation key)
-    // - M4:  rog-control-center (XF86Launch1 above may already be correct)
+    // Presentation key emits Super+P on this laptop (Windows "display/project" key)
+    Mod+P hotkey-overlay-title="Resources" { spawn "resources"; }
+
+    // TODO: no distinct key events captured for these (pointer scroll / firmware-handled):
+    // - F4 (Aura):  asusctl aura effect --next-mode
+    // - F5 (Fan/profile):  asusctl profile next && noctalia msg notification-show "Power Profile" "$(asusctl profile get)"
+    // - M4 (Armoury Crate): rog-control-center (XF86Launch1 above may already be correct)
 
     // Media keys via noctalia
     XF86AudioPlay  allow-when-locked=true { spawn "noctalia" "msg" "media" "toggle"; }

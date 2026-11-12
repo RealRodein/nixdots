@@ -6,6 +6,10 @@
       source = ../shared/my-scripts/startapps.sh;
       force = true;
     };
+    "my-scripts/toggle-touchpad.sh" = {
+      source = ../shared/my-scripts/toggle-touchpad.sh;
+      force = true;
+    };
     "my-scripts/toggles-power.sh" = {
       source = ../shared/my-scripts/toggles-power.sh;
       force = true;

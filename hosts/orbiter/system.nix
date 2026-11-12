@@ -118,5 +118,15 @@
   # No udev rule or userspace script is needed (HDA jack events are not
   # emitted as sound-subsystem udev events anyway).
 
+  # Prevent the VXE NordicMouse 1K Dongle (3554:f58a) from waking the laptop
+  # when the lid is closed and the mouse is bumped. Disable wakeup on the USB
+  # device itself, NOT on the parent xHCI controller (0000:00:14.0): the
+  # internal keyboard (0b05:19b6) hangs off the same controller, so
+  # controller-wide wakeup=disabled breaks keyboard wake as well.
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="3554", ATTR{idProduct}=="f58a", ATTR{power/wakeup}="disabled"
+    ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0b05", ATTR{idProduct}=="19b6", ATTR{power/wakeup}="enabled"
+  '';
+
   system.stateVersion = "26.05";
 }
