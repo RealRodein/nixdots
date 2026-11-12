@@ -62,7 +62,7 @@
     };
   };
 
-  # Convert special Fn scroll events (F4/M4) forwarded via keyd's virtual
+  # Convert special Fn scroll events (F4/F5/M4) forwarded via keyd's virtual
   # pointer and run their actions. keyd remains enabled for keyboard remapping.
   #
   # The synthetic F18/F20 keys are also written to the virtual output device,
@@ -97,9 +97,38 @@
           /run/current-system/sw/bin/bash -lc '/run/current-system/sw/bin/asusctl aura effect --next-mode >>/tmp/evsieve-aura-cmd.log 2>&1; echo rc=$? >>/tmp/evsieve-aura-cmd.log' \
           >/dev/null 2>&1 &
       '';
-      # NOTE: F5 (rel:hwheel:1) is intentionally not hooked. On this laptop the
-      # EC/asusd already cycles the platform profile for Fn+F5, so hooking it
-      # would advance the profile twice.
+      profile = pkgs.writeShellScript "evsieve-profile-next" ''
+        lock="/tmp/evsieve-profile.lock"
+        log="/tmp/evsieve-profile.log"
+        now=$(date +%s%3N 2>/dev/null || date +%s)
+        echo "$(date -Is) invoked now=$now" >> "$log"
+        if [ -f "$lock" ]; then
+          last=$(cat "$lock" 2>/dev/null || echo 0)
+          if [ $((now - last)) -lt 250 ]; then
+            echo "  debounced (last=$last)" >> "$log"
+            exit 0
+          fi
+        fi
+        echo "$now" > "$lock"
+        uid=$(id -u rodein)
+        r="/run/user/$uid"
+        w="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename || true)"
+        ${pkgs.util-linux}/bin/runuser -u rodein -- env \
+          XDG_RUNTIME_DIR="$r" \
+          DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
+          WAYLAND_DISPLAY="$w" \
+          PATH="/run/current-system/sw/bin:/run/wrappers/bin:$PATH" \
+          /run/current-system/sw/bin/bash -c '
+            out="$(asusctl profile next 2>&1)"; rc=$?
+            if [ $rc -eq 0 ]; then
+              name="$(asusctl profile get 2>/dev/null | sed -n "s/^Active profile: //p" | head -n1)"
+              echo "  profile=$name"
+              noctalia msg notification-show "Power Profile" "$name" >/dev/null 2>&1 || true
+            else
+              echo "  asusctl rc=$rc: $out"
+            fi
+          ' >> "$log" 2>&1 &
+      '';
       rog = pkgs.writeShellScript "evsieve-rog-center" ''
         lock="/tmp/evsieve-rog.lock"
         log="/tmp/evsieve-rog.log"
@@ -151,6 +180,7 @@
           --map rel:wheel:1   key:f20:1 key:f20:0 \
           --map rel:wheel:-1  key:f20:1 key:f20:0 \
           --hook key:f18:1 exec-shell="${aura}" \
+          --hook key:f19:1 exec-shell="${profile}" \
           --hook key:f20:1 exec-shell="${rog}" \
           --block key:f18 key:f19 key:f20 \
           --output name="asus-fn-remapped"
