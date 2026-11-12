@@ -61,4 +61,104 @@
       };
     };
   };
+
+  # Convert special Fn scroll events (F4/F5/M4) forwarded via keyd's virtual
+  # pointer into bindable keys. keyd remains enabled for keyboard remapping.
+  systemd.services.asus-fn-scroll-evsieve =
+    let
+      aura = pkgs.writeShellScript "evsieve-aura-next" ''
+        lock="/tmp/evsieve-aura.lock"
+        log="/tmp/evsieve-aura.log"
+        now=$(date +%s%3N 2>/dev/null || date +%s)
+        echo "$(date -Is) invoked now=$now" >> "$log"
+        if [ -f "$lock" ]; then
+          last=$(cat "$lock" 2>/dev/null || echo 0)
+          if [ $((now - last)) -lt 250 ]; then
+            echo "  debounced (last=$last)" >> "$log"
+            exit 0
+          fi
+        fi
+        echo "$now" > "$lock"
+        echo "  run" >> "$log"
+        /run/current-system/sw/bin/bash -lc '/run/current-system/sw/bin/asusctl aura effect --next-mode >>/tmp/evsieve-aura-cmd.log 2>&1; echo rc=$? >>/tmp/evsieve-aura-cmd.log' &
+      '';
+      profile = pkgs.writeShellScript "evsieve-profile-next" ''
+        lock="/tmp/evsieve-profile.lock"
+        now=$(date +%s%3N 2>/dev/null || date +%s)
+        if [ -f "$lock" ]; then
+          last=$(cat "$lock" 2>/dev/null || echo 0)
+          [ $((now - last)) -lt 250 ] && exit 0
+        fi
+        echo "$now" > "$lock"
+        uid=$(id -u rodein)
+        r="/run/user/$uid"
+        w="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename || true)"
+        ${pkgs.util-linux}/bin/runuser -u rodein -- env \
+          XDG_RUNTIME_DIR="$r" \
+          DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
+          WAYLAND_DISPLAY="$w" \
+          /run/current-system/sw/bin/bash -lc 'asusctl profile next && noctalia msg notification-show "Power Profile" "$(asusctl profile get)"' \
+          >/dev/null 2>&1 &
+      '';
+      rog = pkgs.writeShellScript "evsieve-rog-center" ''
+        lock="/tmp/evsieve-rog.lock"
+        log="/tmp/evsieve-rog.log"
+        now=$(date +%s%3N 2>/dev/null || date +%s)
+        echo "$(date -Is) invoked now=$now" >> "$log"
+        if [ -f "$lock" ]; then
+          last=$(cat "$lock" 2>/dev/null || echo 0)
+          if [ $((now - last)) -lt 250 ]; then
+            echo "  debounced (last=$last)" >> "$log"
+            exit 0
+          fi
+        fi
+        echo "$now" > "$lock"
+        echo "  run" >> "$log"
+        uid=$(id -u rodein)
+        r="/run/user/$uid"
+        w="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename || true)"
+        ${pkgs.util-linux}/bin/runuser -u rodein -- env \
+          XDG_RUNTIME_DIR="$r" \
+          DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
+          WAYLAND_DISPLAY="$w" \
+          PATH="/run/current-system/sw/bin:/run/wrappers/bin:$PATH" \
+          /run/current-system/sw/bin/bash -lc '/run/current-system/sw/bin/rog-control-center >>/tmp/evsieve-rog-cmd.log 2>&1 & disown; echo rc=$? >>/tmp/evsieve-rog-cmd.log' || true
+      '';
+      script = pkgs.writeShellScript "asus-fn-scroll-evsieve" ''
+        set -euo pipefail
+        dev=""
+        for i in $(seq 1 50); do
+          for e in /sys/class/input/event*/device/name; do
+            if [ "$(cat "$e" 2>/dev/null)" = "keyd virtual pointer" ]; then
+              dev="/dev/input/$(basename "$(dirname "$(dirname "$e")")")"
+              break 2
+            fi
+          done
+          sleep 0.2
+        done
+        if [ -z "$dev" ]; then
+          echo "keyd virtual pointer not found" >&2
+          exit 1
+        fi
+        exec ${pkgs.evsieve}/bin/evsieve \
+          --input "$dev" grab \
+          --map yield rel:hwheel:-1 key:f18:1 key:f18:0 \
+          --map yield rel:hwheel:1  key:f19:1 key:f19:0 \
+          --map yield rel:wheel:1   key:f20:1 key:f20:0 \
+          --map yield rel:wheel:-1  key:f20:1 key:f20:0 \
+          --output name="asus-fn-remapped"
+      '';
+    in
+    {
+      description = "evsieve remap for ASUS Fn scroll events (via keyd virtual pointer)";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "keyd.service" "systemd-udev-settle.service" ];
+      wants = [ "keyd.service" ];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${script}";
+        Restart = "on-failure";
+        RestartSec = 1;
+      };
+    };
 }
