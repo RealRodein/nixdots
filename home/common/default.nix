@@ -163,10 +163,6 @@ in
     # which replaces the managed symlink. Keep the generated copy authoritative.
     "mimeapps.list".force = true;
 
-    "my-scripts/sandbox.sh" = {
-      source = ../shared/my-scripts/sandbox.sh;
-      force = true;
-    };
     "my-scripts/sync-flatpak-steam-icons.sh" = {
       source = ../shared/my-scripts/sync-flatpak-steam-icons.sh;
       force = true;
