@@ -74,89 +74,24 @@
   # subsequent argument (including --hook) and only reach --output.
   systemd.services.asus-fn-scroll-evsieve =
     let
-      aura = pkgs.writeShellScript "evsieve-aura-next" ''
-        lock="/tmp/evsieve-aura.lock"
-        log="/tmp/evsieve-aura.log"
-        now=$(date +%s%3N 2>/dev/null || date +%s)
-        echo "$(date -Is) invoked now=$now" >> "$log"
-        if [ -f "$lock" ]; then
-          last=$(cat "$lock" 2>/dev/null || echo 0)
-          if [ $((now - last)) -lt 250 ]; then
-            echo "  debounced (last=$last)" >> "$log"
-            exit 0
-          fi
-        fi
-        echo "$now" > "$lock"
+      # Run a command as the desktop user with the Wayland session environment.
+      asUser = cmd: pkgs.writeShellScript "evsieve-as-rodein" ''
         uid=$(id -u rodein)
         r="/run/user/$uid"
-        w="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename || true)"
-        ${pkgs.util-linux}/bin/runuser -u rodein -- env \
+        exec ${pkgs.util-linux}/bin/runuser -u rodein -- env \
           XDG_RUNTIME_DIR="$r" \
           DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
-          WAYLAND_DISPLAY="$w" \
-          /run/current-system/sw/bin/bash -lc '/run/current-system/sw/bin/asusctl aura effect --next-mode >>/tmp/evsieve-aura-cmd.log 2>&1; echo rc=$? >>/tmp/evsieve-aura-cmd.log' \
-          >/dev/null 2>&1 &
-      '';
-      profile = pkgs.writeShellScript "evsieve-profile-next" ''
-        lock="/tmp/evsieve-profile.lock"
-        log="/tmp/evsieve-profile.log"
-        now=$(date +%s%3N 2>/dev/null || date +%s)
-        echo "$(date -Is) invoked now=$now" >> "$log"
-        if [ -f "$lock" ]; then
-          last=$(cat "$lock" 2>/dev/null || echo 0)
-          if [ $((now - last)) -lt 250 ]; then
-            echo "  debounced (last=$last)" >> "$log"
-            exit 0
-          fi
-        fi
-        echo "$now" > "$lock"
-        uid=$(id -u rodein)
-        r="/run/user/$uid"
-        w="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename || true)"
-        ${pkgs.util-linux}/bin/runuser -u rodein -- env \
-          XDG_RUNTIME_DIR="$r" \
-          DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
-          WAYLAND_DISPLAY="$w" \
+          WAYLAND_DISPLAY="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename)" \
+          NIRI_SOCKET="$(ls "$r"/niri.*.sock 2>/dev/null | head -n1)" \
           PATH="/run/current-system/sw/bin:/run/wrappers/bin:$PATH" \
-          /run/current-system/sw/bin/bash -c '
-            out="$(asusctl profile next 2>&1)"; rc=$?
-            if [ $rc -eq 0 ]; then
-              name="$(asusctl profile get 2>/dev/null | sed -n "s/^Active profile: //p" | head -n1)"
-              echo "  profile=$name"
-              noctalia msg notification-show "Power Profile" "$name" >/dev/null 2>&1 || true
-            else
-              echo "  asusctl rc=$rc: $out"
-            fi
-          ' >> "$log" 2>&1 &
+          ${pkgs.bash}/bin/bash -c ${lib.escapeShellArg cmd}
       '';
-      rog = pkgs.writeShellScript "evsieve-rog-center" ''
-        lock="/tmp/evsieve-rog.lock"
-        log="/tmp/evsieve-rog.log"
-        now=$(date +%s%3N 2>/dev/null || date +%s)
-        echo "$(date -Is) invoked now=$now" >> "$log"
-        if [ -f "$lock" ]; then
-          last=$(cat "$lock" 2>/dev/null || echo 0)
-          if [ $((now - last)) -lt 250 ]; then
-            echo "  debounced (last=$last)" >> "$log"
-            exit 0
-          fi
-        fi
-        echo "$now" > "$lock"
-        echo "  run" >> "$log"
-        uid=$(id -u rodein)
-        r="/run/user/$uid"
-        w="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename || true)"
-        # NIRI_SOCKET is needed by `niri msg` inside the wrapper so it can focus
-        # an already-open ROG Control Center window.
-        niri_sock="$(ls "$r"/niri.*.sock 2>/dev/null | head -n1 || true)"
-        ${pkgs.util-linux}/bin/runuser -u rodein -- env \
-          XDG_RUNTIME_DIR="$r" \
-          DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
-          WAYLAND_DISPLAY="$w" \
-          NIRI_SOCKET="$niri_sock" \
-          PATH="/run/current-system/sw/bin:/run/wrappers/bin:$PATH" \
-          /run/current-system/sw/bin/bash /home/rodein/.config/my-scripts/toggle-rog-cc.sh >> "$log" 2>&1 &
+      aura = asUser "asusctl aura effect --next-mode";
+      profile = asUser ''
+        asusctl profile next
+        noctalia msg notification-show "Power Profile" "$(asusctl profile get | sed -n 's/^Active profile: //p')"
       '';
+      rog = asUser "bash /home/rodein/.config/my-scripts/toggle-rog-cc.sh";
       script = pkgs.writeShellScript "asus-fn-scroll-evsieve" ''
         set -euo pipefail
         dev=""
