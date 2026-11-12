@@ -61,4 +61,11 @@
       };
     };
   };
+
+  # Disable wake on VXE NordicMouse 1K Dongle (3554:f58a) to prevent it from
+  # canceling suspend when laptop lid is closed. Moving the mouse causes the
+  # system to wake from S3, heat up with lid closed and black screen.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTR{idVendor}=="3554", ATTR{idProduct}=="f58a", RUN+="/bin/sh -c 'echo disabled > /sys/bus/pci/devices/0000:00:14.0/power/wakeup'"
+  '';
 }

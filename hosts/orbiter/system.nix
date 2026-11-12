@@ -20,6 +20,7 @@
     "vt.global_cursor_default=0"
     "nowatchdog"
     "intel_pstate=no_turbo"
+    "snd.hda_intel.model=asus-headset-mic"
   ];
 
   # --- System ---
@@ -111,6 +112,12 @@
       Restart = "on-failure";
     };
   };
+
+  # Headset microphone auto-switcher for Realtek ALC285 codecs
+  services.udev.extraRules = ''
+    SUBSYSTEM=="sound", ENV{ID_JACK_HEADSET}=="1", RUN+="/bin/sh -c '/home/rodein/bin/headset-mic-switcher.sh'"
+    SUBSYSTEM=="sound", ENV{ID_JACK_HEADPHONE}=="1", RUN+="/bin/sh -c '/home/rodein/bin/headset-mic-switcher.sh'"
+  '';
 
   system.stateVersion = "26.05";
 }
