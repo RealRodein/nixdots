@@ -62,8 +62,16 @@
     };
   };
 
-  # Convert special Fn scroll events (F4/F5/M4) forwarded via keyd's virtual
-  # pointer into bindable keys. keyd remains enabled for keyboard remapping.
+  # Convert special Fn scroll events (F4/M4) forwarded via keyd's virtual
+  # pointer and run their actions. keyd remains enabled for keyboard remapping.
+  #
+  # The synthetic F18/F20 keys are also written to the virtual output device,
+  # but that device is udev-classified as a mouse (ID_INPUT_MOUSE), so libinput
+  # consumers such as niri ignore its key events. The actions are therefore run
+  # by this service's --hook clauses.
+  #
+  # Important: do NOT add the `yield` flag to --map. Yielded events skip every
+  # subsequent argument (including --hook) and only reach --output.
   systemd.services.asus-fn-scroll-evsieve =
     let
       aura = pkgs.writeShellScript "evsieve-aura-next" ''
@@ -79,17 +87,6 @@
           fi
         fi
         echo "$now" > "$lock"
-        echo "  run" >> "$log"
-        /run/current-system/sw/bin/bash -lc '/run/current-system/sw/bin/asusctl aura effect --next-mode >>/tmp/evsieve-aura-cmd.log 2>&1; echo rc=$? >>/tmp/evsieve-aura-cmd.log' &
-      '';
-      profile = pkgs.writeShellScript "evsieve-profile-next" ''
-        lock="/tmp/evsieve-profile.lock"
-        now=$(date +%s%3N 2>/dev/null || date +%s)
-        if [ -f "$lock" ]; then
-          last=$(cat "$lock" 2>/dev/null || echo 0)
-          [ $((now - last)) -lt 250 ] && exit 0
-        fi
-        echo "$now" > "$lock"
         uid=$(id -u rodein)
         r="/run/user/$uid"
         w="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename || true)"
@@ -97,9 +94,12 @@
           XDG_RUNTIME_DIR="$r" \
           DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
           WAYLAND_DISPLAY="$w" \
-          /run/current-system/sw/bin/bash -lc 'asusctl profile next && noctalia msg notification-show "Power Profile" "$(asusctl profile get)"' \
+          /run/current-system/sw/bin/bash -lc '/run/current-system/sw/bin/asusctl aura effect --next-mode >>/tmp/evsieve-aura-cmd.log 2>&1; echo rc=$? >>/tmp/evsieve-aura-cmd.log' \
           >/dev/null 2>&1 &
       '';
+      # NOTE: F5 (rel:hwheel:1) is intentionally not hooked. On this laptop the
+      # EC/asusd already cycles the platform profile for Fn+F5, so hooking it
+      # would advance the profile twice.
       rog = pkgs.writeShellScript "evsieve-rog-center" ''
         lock="/tmp/evsieve-rog.lock"
         log="/tmp/evsieve-rog.log"
@@ -117,12 +117,16 @@
         uid=$(id -u rodein)
         r="/run/user/$uid"
         w="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename || true)"
+        # NIRI_SOCKET is needed by `niri msg` inside the wrapper so it can focus
+        # an already-open ROG Control Center window.
+        niri_sock="$(ls "$r"/niri.*.sock 2>/dev/null | head -n1 || true)"
         ${pkgs.util-linux}/bin/runuser -u rodein -- env \
           XDG_RUNTIME_DIR="$r" \
           DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
           WAYLAND_DISPLAY="$w" \
+          NIRI_SOCKET="$niri_sock" \
           PATH="/run/current-system/sw/bin:/run/wrappers/bin:$PATH" \
-          /run/current-system/sw/bin/bash -lc '/run/current-system/sw/bin/rog-control-center >>/tmp/evsieve-rog-cmd.log 2>&1 & disown; echo rc=$? >>/tmp/evsieve-rog-cmd.log' || true
+          /run/current-system/sw/bin/bash /home/rodein/.config/my-scripts/toggle-rog-cc.sh >> "$log" 2>&1 &
       '';
       script = pkgs.writeShellScript "asus-fn-scroll-evsieve" ''
         set -euo pipefail
@@ -142,10 +146,13 @@
         fi
         exec ${pkgs.evsieve}/bin/evsieve \
           --input "$dev" grab \
-          --map yield rel:hwheel:-1 key:f18:1 key:f18:0 \
-          --map yield rel:hwheel:1  key:f19:1 key:f19:0 \
-          --map yield rel:wheel:1   key:f20:1 key:f20:0 \
-          --map yield rel:wheel:-1  key:f20:1 key:f20:0 \
+          --map rel:hwheel:-1 key:f18:1 key:f18:0 \
+          --map rel:hwheel:1  key:f19:1 key:f19:0 \
+          --map rel:wheel:1   key:f20:1 key:f20:0 \
+          --map rel:wheel:-1  key:f20:1 key:f20:0 \
+          --hook key:f18:1 exec-shell="${aura}" \
+          --hook key:f20:1 exec-shell="${rog}" \
+          --block key:f18 key:f19 key:f20 \
           --output name="asus-fn-remapped"
       '';
     in

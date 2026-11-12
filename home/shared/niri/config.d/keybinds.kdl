@@ -46,10 +46,11 @@ binds {
     // Presentation key emits Super+P on this laptop (Windows "display/project" key)
     Mod+P hotkey-overlay-title="Resources" { spawn "resources"; }
 
-    // Mapped from Asus Keyboard scroll events via evsieve (asus-fn-scroll-evsieve.service)
-    F18 hotkey-overlay-title="Aura Mode Next" { spawn-sh "asusctl aura effect --next-mode"; }
-    F19 hotkey-overlay-title="Profile Next" { spawn-sh "asusctl profile next && noctalia msg notification-show 'Power Profile' \"$(asusctl profile get)\""; }
-    F20 hotkey-overlay-title="ROG Control Center" { spawn-sh "~/.config/my-scripts/toggle-rog-cc.sh"; }
+    // ASUS Fn scroll keys (F4 → aura, M4 → ROG Control Center) are converted to
+    // F18/F20 by asus-fn-scroll-evsieve.service, which also runs the actions via
+    // its --hook. Do NOT bind F18/F19/F20 here: evsieve's output device is
+    // udev-classified as a mouse (ID_INPUT_MOUSE), so niri never sees those keys.
+    // F5 (next power profile) is handled natively by the EC/asusd.
 
     // Media keys via noctalia
     XF86AudioPlay  allow-when-locked=true { spawn "noctalia" "msg" "media" "toggle"; }
