@@ -17,6 +17,7 @@
     ++ lib.optionals (machineName == "orbiter") [
       ./apps/nautilus.nix
       ./desktop/niri.nix
+      ./desktop/umbriel.nix
       ./desktop/noctalia.nix
       ./hosts/orbiter.nix
     ]

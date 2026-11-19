@@ -1,4 +1,4 @@
-config_version = 16
+config_version = 20
 
 [audio]
 enable_sounds = true
@@ -16,11 +16,12 @@ order = [ "Main", "Side" ]
     background_opacity = 0.74999998323619366
     border_width = 1.0
     capsule = true
+    capsule_border_width = 0.5
     capsule_fill = "secondary"
     capsule_opacity = 0.069999998435378075
-    capsule_padding = 12.0
+    capsule_padding = 11.0
     capsule_radius = 6
-    capsule_thickness = 0.72999998740851879
+    capsule_thickness = 0.74999998696148396
     center = [ "group:g2" ]
     end = [ "privacy", "tray", "group:g1", "control-center", "spacer_main-sides" ]
     font_weight = 400
@@ -41,7 +42,7 @@ order = [ "Main", "Side" ]
         id = "g1"
         members = [ "battery", "notifications", "network", "clock" ]
         opacity = 0.070000000298023224
-        padding = 13.0
+        padding = 7.0
         radius = 8.0
         widget_spacing = 12
 
@@ -743,7 +744,6 @@ niri_overview_type_to_launch_enabled = true
 polkit_agent = true
 screen_time_enabled = true
 settings_show_advanced = true
-settings_window_translucent = true
 telemetry_enabled = true
 ui_scale = 0.85000000521540642
 
@@ -856,10 +856,10 @@ directory = "/home/rodein/Pictures/Wallpapers"
     path = "/home/rodein/Pictures/Wallpapers/wallhaven-rqjj3j.png"
 
     [wallpaper.last]
-    path = "/home/rodein/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_musashi_soul_of_the_katana_vagabond_moewalls_com_mp4.jpg"
+    path = "/home/rodein/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_mount_fuji_torii_sunset_moewalls_com_mp4.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rodein/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_musashi_soul_of_the_katana_vagabond_moewalls_com_mp4.jpg"
+    path = "/home/rodein/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_mount_fuji_torii_sunset_moewalls_com_mp4.jpg"
 
 [weather]
 auto_locate = true
@@ -981,7 +981,7 @@ capsule_opacity = 0.0
 capsule_padding = 0
 capsule_radius = 6
 interactive = false
-length = 6
+length = 4
 type = "spacer"
 
 [widget.spacer_side-pannel]
@@ -1052,8 +1052,8 @@ capsule_padding = 2
 empty_color = "outline_variant"
 font_family = "JetBrainsMono NFM Medium"
 max_label_chars = 3
+monitors = [ "*" ]
 occupied_color = "tertiary"
 pill_scale = 0.40000000000000002
-show_all_outputs = true
 show_tooltip = false
 style = "minimal"

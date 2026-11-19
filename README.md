@@ -6,7 +6,7 @@ A two-machine NixOS + Home Manager flake. Each host keeps the desktop and workfl
 
 | Host | Machine | Desktop | Theme source |
 | --- | --- | --- | --- |
-| `orbiter` | ASUS laptop | Niri + Noctalia | Noctalia wallpaper templates |
+| `orbiter` | ASUS laptop | Umbriel + Noctalia (Niri still installed) | Noctalia wallpaper templates |
 | `railjack` | Desktop | COSMIC | matugen from the COSMIC wallpaper |
 
 Shared defaults:
@@ -27,7 +27,7 @@ Shared defaults:
 - `hosts/railjack/cosmic.nix` - railjack COSMIC session and greeter.
 - `home/common/` - shared Home Manager shell, environment, MIME, and GTK config.
 - `home/apps/` - per-application Home Manager modules.
-- `home/desktop/` - orbiter Niri/Noctalia and railjack COSMIC/matugen modules.
+- `home/desktop/` - orbiter Umbriel/Niri/Noctalia and railjack COSMIC/matugen modules.
 - `home/hosts/` - host-specific Home Manager activation and config.
 - `home/shared/` - mutable configs used by Home Manager (Niri, yazi, scripts, matugen templates).
 
@@ -56,6 +56,18 @@ Noctalia generates its built-in templates (btop, Ghostty, GTK, Niri) and communi
 ```
 
 Rebuild with `#orbiter` to link that state into `~/.local/state/noctalia`.
+
+### orbiter compositor
+
+Umbriel is the default session (greetd autologin). It and `xdg-desktop-portal-umbriel` come from the `nixpkgs-unstable` flake input; the rest of the system stays on `nixos-26.05`. The generated Umbriel config only autostarts Noctalia and lives in `home/desktop/umbriel.nix` — edit it there, not in `~/.config/umbriel/config.toml`.
+
+Niri is still installed, configured, and registered as a Wayland session. To go back to it as the autologin default, change `services.greetd.settings.default_session.command` in `modules/nixos/desktop/noctalia.nix` to:
+
+```nix
+command = "${niriSession}/bin/niri-session";
+```
+
+then rebuild with `#orbiter`. `niri-session` can also be run from a TTY while Umbriel is not active.
 
 ### railjack
 
