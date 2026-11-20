@@ -1,28 +1,6 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, ... }:
 
 {
-  # --- Boot ---
-  boot.loader.systemd-boot = {
-    enable = true;
-    configurationLimit = 5;
-    editor = false;
-  };
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.timeout = 0;
-
-  boot.consoleLogLevel = 0;
-  boot.initrd.verbose = false;
-  boot.kernelParams = [
-    "quiet"
-    "loglevel=3"
-    "rd.systemd.show_status=false"
-    "udev.log_level=3"
-    "vt.global_cursor_default=0"
-    "nowatchdog"
-    "intel_pstate=no_turbo"
-  ];
-
-  # --- System ---
   networking.hostName = "orbiter";
 
   # File manager integration: removable drives, trash, network mounts.
@@ -31,19 +9,17 @@
   networking.firewall.allowedTCPPorts = [ 46561 ];
   networking.firewall.allowedUDPPorts = [ 46561 ];
 
-  services.xserver.xkb = {
-    layout = "cz";
-    variant = "coder";
-    options = "ctrl:rctrl_shift";
-  };
+  # Headset microphone hotplug is handled natively by PipeWire/WirePlumber:
+  # the ALC285 exposes an "analog-input-mic" route that becomes available when
+  # the combo jack detects a mic, and the existing source node switches to it.
+  # No udev rule or userspace script is needed (HDA jack events are not
+  # emitted as sound-subsystem udev events anyway).
 
-  services.xserver.videoDrivers = [ "nvidia" ];
-
+  # --- GPU ---
+  # Shared NVIDIA defaults live in modules/nixos/hardware/nvidia.nix. The
+  # laptop-specific bits (open driver, pinned package, PRIME offload) stay here.
   hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = true;
     open = true;
-    nvidiaSettings = true;
 
     # TEMP: 595.71.05 doesn't build on linux 7.2 ("strncpy" removed from the
     # kernel, drm_atomic_state renamed). NVIDIA fixed both in 610.57.04
@@ -64,69 +40,6 @@
       nvidiaBusId = "PCI:1:0:0";
     };
   };
-
-  # Force Full RGB on HDMI to fix washed-out colors
-  boot.extraModprobeConfig = ''
-    options nvidia NVreg_RegistryDwords="RMForceFullRangeRGB=1"
-  '';
-
-  # --- Kernel ---
-  # Previously pinned to 7.2 for NVIDIA 610.57.04 compatibility.
-  # Now unpinning to use the default nixpkgs kernel.
-  # If NVIDIA driver issues arise, re-pin to an appropriate kernel series.
-
-  # --- ASUS / GPU switching ---
-  boot.kernelModules = [ "acpi_call" ];
-  boot.extraModulePackages = with config.boot.kernelPackages; [ acpi_call ];
-  services.asusd.enable = true;
-  # services.supergfxd.enable = true;
-
-  # Poll no_turbo every 1s — asusd re-enables it otherwise
-  systemd.services.disable-turbo = {
-    description = "Keep Intel Turbo Boost disabled";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "sysinit.target" ];
-    before = [ "asusd.service" "auto-cpufreq.service" ];
-    unitConfig.DefaultDependencies = false;
-    serviceConfig = {
-      Type = "simple";
-      Restart = "always";
-      RestartSec = "1s";
-      ExecStart = "${pkgs.writeShellScript "disable-turbo" ''
-        while true; do
-          echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
-          sleep 1
-        done
-      ''}";
-    };
-  };
-
-  systemd.services.auto-cpufreq = {
-    description = "auto-cpufreq - Automatic CPU speed & power optimizer";
-    wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.bash ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.auto-cpufreq}/bin/auto-cpufreq --daemon";
-      Restart = "on-failure";
-    };
-  };
-
-  # Headset microphone hotplug is handled natively by PipeWire/WirePlumber:
-  # the ALC285 exposes an "analog-input-mic" route that becomes available when
-  # the combo jack detects a mic, and the existing source node switches to it.
-  # No udev rule or userspace script is needed (HDA jack events are not
-  # emitted as sound-subsystem udev events anyway).
-
-  # Prevent the VXE NordicMouse 1K Dongle (3554:f58a) from waking the laptop
-  # when the lid is closed and the mouse is bumped. Disable wakeup on the USB
-  # device itself, NOT on the parent xHCI controller (0000:00:14.0): the
-  # internal keyboard (0b05:19b6) hangs off the same controller, so
-  # controller-wide wakeup=disabled breaks keyboard wake as well.
-  services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="3554", ATTR{idProduct}=="f58a", ATTR{power/wakeup}="disabled"
-    ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0b05", ATTR{idProduct}=="19b6", ATTR{power/wakeup}="enabled"
-  '';
 
   system.stateVersion = "26.05";
 }

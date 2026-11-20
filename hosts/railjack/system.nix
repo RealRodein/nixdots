@@ -1,27 +1,6 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
-  # --- Boot ---
-  boot.loader.systemd-boot = {
-    enable = true;
-    configurationLimit = 5;
-    editor = false;
-  };
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.timeout = 0;
-
-  boot.consoleLogLevel = 0;
-  boot.initrd.verbose = false;
-  boot.kernelParams = [
-    "quiet"
-    "loglevel=3"
-    "rd.systemd.show_status=false"
-    "udev.log_level=3"
-    "vt.global_cursor_default=0"
-    "nowatchdog"
-  ];
-
-  # --- System ---
   networking.hostName = "railjack";
 
   # This network has no working IPv6 (router only gives link-local), but DNS
@@ -73,30 +52,19 @@
 
   services.system76-scheduler.enable = true;
 
-  services.xserver.xkb = {
-    layout = "cz";
-    variant = "coder";
-    options = "ctrl:rctrl_shift";
-  };
-
-  services.xserver.videoDrivers = [ "nvidia" ];
-
   services.hardware.openrgb = {
     enable = true;
     package = pkgs.openrgb-with-all-plugins;
   };
   hardware.i2c.enable = true;
   boot.kernelModules = [ "i2c-dev" ];
+
+  # Shared NVIDIA defaults live in modules/nixos/hardware/nvidia.nix. This
+  # desktop keeps the proprietary driver and its pinned package.
   # nixpkgs-26.05's nvidia 595.71.05 fails to compile against linux 7.2
   # (implicit 'strncpy' declaration removed), so pin the fixed 595.99.02 driver.
   hardware.nvidia = {
-    modesetting.enable = true;
-    # Runtime PM (and with it the suspend/resume paths) is off by default in this
-    # driver config, which leaves the GPU powered across suspend and makes the
-    # resume fail with a lost video-memory allocation.
-    powerManagement.enable = true;
     open = false;
-    nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
       version = "595.99.02";
       sha256_64bit = "sha256-6HR3lYv3YwcFSTJL1a1slI66btIQ5EAFs+/4SUD24ew=";
@@ -106,11 +74,6 @@
       persistencedSha256 = "sha256-VyKtF/HdHPQrHHK6opSO69M72LmnGZtauuchj9uuje8=";
     };
   };
-
-  # Force Full RGB on HDMI to fix washed-out colors
-  boot.extraModprobeConfig = ''
-    options nvidia NVreg_RegistryDwords="RMForceFullRangeRGB=1"
-  '';
 
   # --- Frame generation ---
   # lsfg-vk: Lossless Scaling's frame generation as a Vulkan implicit layer,

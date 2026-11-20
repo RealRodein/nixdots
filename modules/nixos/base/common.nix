@@ -1,6 +1,8 @@
 { ... }:
 
 {
+  imports = [ ./boot.nix ];
+
   networking.networkmanager.enable = true;
   time.timeZone = "Europe/Prague";
 
@@ -31,6 +33,15 @@
   # not the cause of the slow reboot; disable it to silence the misleading
   # message (the kernel "nowatchdog" param does not affect systemd's use).
   systemd.settings.Manager.RebootWatchdogSec = "0";
+
+  # Both machines use the same Czech programmer layout. Niri reads its own
+  # copy in home/shared/niri/config.d/devices.kdl; this covers greetd, COSMIC
+  # and XWayland clients.
+  services.xserver.xkb = {
+    layout = "cz";
+    variant = "coder";
+    options = "ctrl:rctrl_shift";
+  };
 
   security.rtkit.enable = true;
   services.pipewire = {

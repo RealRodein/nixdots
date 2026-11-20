@@ -12,13 +12,16 @@
     # Orbiter live desktop module (Noctalia/Niri).
     ../../modules/nixos/desktop/noctalia.nix
 
-    # Shared feature modules.
+    # Shared hardware and feature modules.
+    ../../modules/nixos/hardware/nvidia.nix
     ../../modules/nixos/features/gaming.nix
     ../../modules/nixos/features/tailscale.nix
 
-    # Host-local modules (keep hardware local to host).
+    # Host-local modules (keep hardware and machine quirks local to the host).
     ./hardware.nix
     ./system.nix
+    ./asus.nix
+    ./power.nix
     ./users.nix
     ./packages.nix
     ./fonts.nix

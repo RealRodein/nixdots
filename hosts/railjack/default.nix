@@ -7,6 +7,7 @@
     ../../modules/nixos/packages/cli.nix
     ../../modules/nixos/packages/gui.nix
     ../../modules/nixos/users/rodein-base.nix
+    ../../modules/nixos/hardware/nvidia.nix
     ../../modules/nixos/features/gaming.nix
 
     ./hardware.nix
