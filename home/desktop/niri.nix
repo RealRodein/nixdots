@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   xdg.configFile = {
@@ -34,14 +34,11 @@
       source = ../shared/niri/config.d/close-or-tab.sh;
       force = true;
     };
+    # Orbiter-only output layout. Managed declaratively instead of being copied
+    # by an activation script on every rebuild.
+    "niri/config.d/outputs.kdl" = {
+      source = ../shared/niri/config.d/outputs-orbiter.kdl;
+      force = true;
+    };
   };
-
-  home.activation.copyOutputsConfig = config.lib.dag.entryAfter [ "writeBoundary" ] ''
-    SRC="${../shared/niri/config.d/outputs-orbiter.kdl}"
-    DST="$HOME/.config/niri/config.d/outputs.kdl"
-    mkdir -p "$(dirname "$DST")"
-    if [ -f "$SRC" ]; then
-      cp -f "$SRC" "$DST"
-    fi
-  '';
 }
