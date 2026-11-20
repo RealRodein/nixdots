@@ -479,11 +479,11 @@ radius = 12
 reserve_space = false
 
 [hooks]
-battery_charging = "/home/rodein/nixdots/home/shared/my-scripts/toggles-power.sh"
-battery_discharging = "/home/rodein/nixdots/home/shared/my-scripts/toggles-save.sh"
-colors-changed = "/home/rodein/nixdots/home/shared/ghostty/titlebar-sync.sh"
-started = "noctalia msg action screen-lock & /home/rodein/nixdots/home/shared/my-scripts/startapps.sh"
-wallpaper_changed = "/home/rodein/nixdots/home/shared/ghostty/titlebar-sync.sh"
+battery_charging = "/home/rodein/.config/my-scripts/toggles-power.sh"
+battery_discharging = "/home/rodein/.config/my-scripts/toggles-save.sh"
+colors-changed = "/home/rodein/.config/ghostty/titlebar-sync.sh"
+started = "noctalia msg action screen-lock & /home/rodein/.config/my-scripts/startapps.sh"
+wallpaper_changed = "/home/rodein/.config/ghostty/titlebar-sync.sh"
 
 [idle]
 behavior_order = [ "lock", "screen-off", "suspend" ]
