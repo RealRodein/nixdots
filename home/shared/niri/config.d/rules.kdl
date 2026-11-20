@@ -71,6 +71,15 @@ window-rule {
     open-floating false
 }
 
+// Wine SNI bridge keeps an offscreen X11 container to read Wine tray icons.
+// Hide it instead of letting it show as a black square.
+window-rule {
+    match app-id=r#"^wine-sni-bridge$"#
+    open-floating true
+    opacity 0.0
+    default-floating-position x=-10000 y=-10000
+}
+
 layer-rule {
   match namespace="^noctalia-backdrop"
   place-within-backdrop true
