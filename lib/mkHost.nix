@@ -1,10 +1,10 @@
 { nixpkgs, home-manager, lsfg-vk, inputs }:
 
-{ system, hostPath }:
+{ system, hostName, hostPath }:
 nixpkgs.lib.nixosSystem {
   inherit system;
 
-  specialArgs = { inherit inputs; };
+  specialArgs = { inherit inputs hostName; };
 
   modules = [
     hostPath
@@ -18,11 +18,13 @@ nixpkgs.lib.nixosSystem {
         useUserPackages = true;
 
         extraSpecialArgs = {
-          inherit inputs;
-          machineName = nixpkgs.lib.last (nixpkgs.lib.splitString "/" (toString hostPath));
+          inherit inputs hostName;
         };
 
-        users.rodein = import ../home/rodein.nix;
+        # Each host owns its Home Manager entrypoint, so host-specific imports
+        # stay visible in home/hosts/<host>.nix instead of being derived from
+        # the machine name in a shared conditional import list.
+        users.rodein = import (../home/hosts + "/${hostName}.nix");
       };
     }
   ];

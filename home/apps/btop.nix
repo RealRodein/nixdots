@@ -1,7 +1,7 @@
-{ machineName, ... }:
+{ hostName, ... }:
 
 let
-  theme = if machineName == "orbiter" then "noctalia" else "matugen";
+  theme = if hostName == "orbiter" then "noctalia" else "matugen";
 in
 {
   xdg.configFile."btop/btop.conf".text = ''

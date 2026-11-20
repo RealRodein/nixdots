@@ -1,11 +1,11 @@
-{ machineName, ... }:
+{ hostName, ... }:
 
 let
   settings = {
     base_keymap = "VSCode";
     ui_font_size = 15;
     buffer_font_size = 14;
-    theme = if machineName == "orbiter" then "Ayu Dark" else "Matugen";
+    theme = if hostName == "orbiter" then "Ayu Dark" else "Matugen";
     relative_line_numbers = true;
     soft_wrap = "editor_width";
     vim_mode = false;

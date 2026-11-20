@@ -1,6 +1,14 @@
 { config, ... }:
 
 {
+  imports = [
+    ../common
+    ../apps
+    ../apps/luciole.nix
+    ../desktop/niri.nix
+    ../desktop/noctalia.nix
+  ];
+
   xdg.configFile = {
     "my-scripts/startapps.sh" = {
       source = ../shared/my-scripts/startapps.sh;
@@ -22,8 +30,16 @@
       source = ../shared/my-scripts/toggle-rog-cc.sh;
       force = true;
     };
+    # Wrapper for GameMode + NVIDIA offload + MangoHud. It is orbiter-specific
+    # because it relies on PRIME render offload.
+    "my-scripts/gamemoderunexec" = {
+      source = ../shared/my-scripts/gamemoderunexec;
+      force = true;
+    };
   };
 
+  # Deliberate exception to declarative config: rog-control-center rewrites its
+  # own config file, so seed it once and leave the user's copy writable.
   home.activation.copyRogConfig = config.lib.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -f "$HOME/.config/rog/rog-control-center.cfg" ] || [ -L "$HOME/.config/rog/rog-control-center.cfg" ]; then
       mkdir -p "$HOME/.config/rog"

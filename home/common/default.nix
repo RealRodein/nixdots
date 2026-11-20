@@ -1,7 +1,7 @@
-{ pkgs, machineName, ... }:
+{ pkgs, hostName, ... }:
 
 let
-  isOrbiter = machineName == "orbiter";
+  isOrbiter = hostName == "orbiter";
   fileManager =
     if isOrbiter then "dev.noctalia.luciole.desktop" else "com.system76.CosmicFiles.desktop";
 in

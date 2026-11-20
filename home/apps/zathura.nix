@@ -1,4 +1,4 @@
-{ config, lib, machineName, ... }:
+{ config, lib, hostName, ... }:
 
 let
   ayuColors = ''
@@ -37,7 +37,7 @@ in
     set font "JetBrainsMono Nerd Font Mono 10"
   '';
 
-  xdg.configFile."zathura/matugen" = lib.mkIf (machineName == "orbiter") {
+  xdg.configFile."zathura/matugen" = lib.mkIf (hostName == "orbiter") {
     text = ayuColors;
     force = true;
   };
