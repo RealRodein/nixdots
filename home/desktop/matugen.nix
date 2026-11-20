@@ -5,7 +5,7 @@ let
   cosmicSettings = "${pkgs.cosmic-settings}/bin/cosmic-settings";
 
   refresh = pkgs.writeShellScript "matugen-refresh" ''
-    set -u
+    set -euo pipefail
 
     background_config="$HOME/.config/cosmic/com.system76.CosmicBackground/v1/all"
     wallpaper=""
@@ -15,17 +15,26 @@ let
     fi
 
     if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
-      wallpaper="$(${pkgs.findutils}/bin/find "$HOME/Pictures/Wallpapers" -maxdepth 1 -type f 2>/dev/null | head -n1)"
+      wallpaper="$(${pkgs.findutils}/bin/find "$HOME/Pictures/Wallpapers" -maxdepth 1 -type f 2>/dev/null | head -n1 || true)"
+    fi
+
+    if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
+      echo "matugen-refresh: no wallpaper found; skipping theme refresh" >&2
+      exit 0
     fi
 
     mkdir -p "$HOME/.config/matugen/themes"
 
-    if [ -f "$wallpaper" ]; then
-      ${pkgs.matugen}/bin/matugen image "$wallpaper" -m dark --source-color-index 0 || true
+    if ! ${pkgs.matugen}/bin/matugen image "$wallpaper" -m dark --source-color-index 0; then
+      echo "matugen-refresh: matugen failed for $wallpaper" >&2
+      exit 1
     fi
 
     if [ -x "${cosmicSettings}" ] && [ -f "$HOME/.config/matugen/themes/cosmic.ron" ]; then
-      ${cosmicSettings} appearance import "$HOME/.config/matugen/themes/cosmic.ron" || true
+      if ! ${cosmicSettings} appearance import "$HOME/.config/matugen/themes/cosmic.ron"; then
+        echo "matugen-refresh: COSMIC theme import failed" >&2
+        exit 1
+      fi
     fi
   '';
 in
@@ -98,6 +107,8 @@ in
 
   home.activation.matugen = config.lib.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p "$HOME/.config/matugen/themes"
-    ${refresh}
+    if ! ${refresh}; then
+      echo "matugen: initial theme refresh failed; it will retry when the wallpaper changes (systemctl --user status matugen-refresh.service)" >&2
+    fi
   '';
 }
