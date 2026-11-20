@@ -117,7 +117,24 @@
         "lsfg-vk": "lsfg-vk",
         "luciole": "luciole",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "wine-sni-bridge": "wine-sni-bridge"
+      }
+    },
+    "wine-sni-bridge": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779627059,
+        "narHash": "sha256-vP05dcrMH3KzqY7UEBjOLg1/vBjxRMs6LB/SKtbFsis=",
+        "owner": "waliori",
+        "repo": "wine-sni-bridge",
+        "rev": "676c5dd2b9320c18c5c776e052791399dd43edc6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "waliori",
+        "repo": "wine-sni-bridge",
+        "type": "github"
       }
     }
   },

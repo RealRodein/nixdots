@@ -29,6 +29,13 @@
       url = "github:jjnuthuagen/cosmic-start-menu-applet";
       flake = false;
     };
+
+    # XEmbed -> StatusNotifierItem bridge for Wine tray icons on Wayland.
+    # Needed so Wine apps (Twitch Drops Miner) show up in Noctalia's tray.
+    wine-sni-bridge = {
+      url = "github:waliori/wine-sni-bridge";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, home-manager, lsfg-vk, ... }:
@@ -36,7 +43,16 @@
     system = "x86_64-linux";
     mkHost = import ./lib/mkHost.nix { inherit nixpkgs home-manager lsfg-vk inputs; };
   in {
-    nixosConfigurations.orbiter = mkHost { inherit system; hostPath = ./hosts/orbiter; };
-    nixosConfigurations.railjack = mkHost { inherit system; hostPath = ./hosts/railjack; };
+    nixosConfigurations.orbiter = mkHost {
+      inherit system;
+      hostName = "orbiter";
+      hostPath = ./hosts/orbiter;
+    };
+
+    nixosConfigurations.railjack = mkHost {
+      inherit system;
+      hostName = "railjack";
+      hostPath = ./hosts/railjack;
+    };
   };
 }
