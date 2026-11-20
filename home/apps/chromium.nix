@@ -8,7 +8,8 @@
     commandLineArgs = [
       "--ozone-platform-hint=auto"
       "--enable-features=WaylandWindowDecorations"
-      "--password-store=gnome-libsecret"
+      # GNOME Keyring is not installed; use Chromium's built-in store.
+      "--password-store=basic"
     ];
   };
 }
