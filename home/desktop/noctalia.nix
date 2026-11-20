@@ -1,6 +1,11 @@
 { config, ... }:
 
 {
+  # Noctalia's tray only speaks StatusNotifierItem (SNI). Wine tray icons use
+  # the legacy X11 XEmbed protocol, so bridge them over XWayland into SNI.
+  # This is what makes the Twitch Drops Miner tray icon visible in Noctalia.
+  services.xembed-sni-proxy.enable = true;
+
   home.activation.ensureNoctaliaSymlinks = config.lib.dag.entryAfter [ "writeBoundary" ] ''
     DOTS="$HOME/nixdots/home/orbiter/dotfiles/noctalia"
     mkdir -p "$HOME/.local/state/noctalia"
