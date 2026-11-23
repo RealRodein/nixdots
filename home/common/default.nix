@@ -86,6 +86,10 @@ in
     BROWSER = "firefox";
     TERMINAL = "ghostty";
     GAMEMODERUNEXEC = "env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia mangohud";
+    # GE-Proton 11-1 ships rpc-bridge behind this flag, letting Windows games
+    # set Discord Rich Presence through native Vesktop's IPC socket. Ignored by
+    # stock Proton.
+    PROTON_DISCORD_BRIDGE = "1";
   };
 
   programs.git = {
