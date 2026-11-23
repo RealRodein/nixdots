@@ -9,14 +9,26 @@ let
       config.services.displayManager.sessionPackages
   );
 
+  # sessionPackages is the package containing share/xsessions/xfce.desktop.
+  # Its Exec line points at the generated script that actually starts
+  # xfce4-session and waits for it; pass that to the NixOS Xsession wrapper.
+  xfceCommand = lib.pipe "${xfceSession}/share/xsessions/xfce.desktop" [
+    builtins.readFile
+    (lib.splitString "\n")
+    (lib.findFirst (line: lib.hasPrefix "Exec=" line) (throw "xfce.desktop has no Exec line"))
+    (lib.removePrefix "Exec=")
+  ];
+
   startXfce = pkgs.writeShellScript "start-xfce" ''
     export XDG_CURRENT_DESKTOP=XFCE
     export XDG_SESSION_DESKTOP=xfce
     export XDG_SESSION_TYPE=x11
+    export XDG_RUNTIME_DIR="''${XDG_RUNTIME_DIR:-/run/user/1000}"
+    export DBUS_SESSION_BUS_ADDRESS="''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$XDG_RUNTIME_DIR/bus}"
 
     exec ${pkgs.xinit}/bin/xinit \
       ${config.services.displayManager.sessionData.wrapper} \
-      ${xfceSession} \
+      ${xfceCommand} \
       -- -keeptty
   '';
 in

@@ -42,6 +42,11 @@ in
   gtk.gtk3.extraCss = "@import url(\"matugen.css\");";
   gtk.gtk4.extraCss = "@import url(\"matugen.css\");";
 
+  # Old matugen wrote straight to gtk.css. Let Home Manager replace those stale
+  # regular files; theme colors now live in the imported matugen.css instead.
+  xdg.configFile."gtk-3.0/gtk.css".force = true;
+  xdg.configFile."gtk-4.0/gtk.css".force = true;
+
   xdg.configFile = {
     "matugen/config.toml".text = ''
       [config]
