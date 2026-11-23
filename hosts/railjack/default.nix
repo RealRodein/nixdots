@@ -9,6 +9,7 @@
     ../../modules/nixos/users/rodein-base.nix
     ../../modules/nixos/hardware/nvidia.nix
     ../../modules/nixos/features/gaming.nix
+    ../../modules/nixos/features/tailscale.nix
 
     ./hardware.nix
     ./system.nix

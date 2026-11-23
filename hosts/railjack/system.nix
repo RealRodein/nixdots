@@ -52,6 +52,16 @@
 
   services.system76-scheduler.enable = true;
 
+  # --- Game streaming ---
+  # Sunshine is the host; Moonlight on orbiter connects to it. Settings and
+  # application entries are left to Sunshine's web UI so they stay editable.
+  services.sunshine = {
+    enable = true;
+    openFirewall = true;
+    # Required for DRM/KMS screen capture; installs a capability wrapper.
+    capSysAdmin = true;
+  };
+
   services.hardware.openrgb = {
     enable = true;
     package = pkgs.openrgb-with-all-plugins;

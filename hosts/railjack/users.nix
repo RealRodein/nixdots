@@ -2,6 +2,6 @@
 
 {
   users.users.rodein = {
-    extraGroups = [ "wheel" "networkmanager" "audio" "video" ];
+    extraGroups = [ "wheel" "networkmanager" "audio" "video" "tailscale" ];
   };
 }
