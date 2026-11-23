@@ -19,6 +19,11 @@ let
     (lib.removePrefix "Exec=")
   ];
 
+  # Use NixOS's generated X server arguments rather than letting Xorg
+  # autodetect the GPU. This supplies the NVIDIA config and keeps manual-start
+  # logging out of /dev/null; `startx` passes them the same way.
+  xserverArgs = lib.concatStringsSep " " config.services.xserver.displayManager.xserverArgs;
+
   startXfce = pkgs.writeShellScript "start-xfce" ''
     export XDG_CURRENT_DESKTOP=XFCE
     export XDG_SESSION_DESKTOP=xfce
@@ -29,11 +34,13 @@ let
     exec ${pkgs.xinit}/bin/xinit \
       ${config.services.displayManager.sessionData.wrapper} \
       ${xfceCommand} \
-      -- -keeptty
+      -- ${config.services.xserver.displayManager.xserverBin} ${xserverArgs} -keeptty
   '';
 in
 {
   services.xserver.enable = true;
+  services.xserver.exportConfiguration = true;
+  services.xserver.logFile = lib.mkForce null;
 
   services.xserver.desktopManager.xfce = {
     enable = true;
@@ -52,9 +59,19 @@ in
 
   services.greetd = {
     enable = true;
-    settings.default_session = {
-      command = "${startXfce}";
-      user = "rodein";
+    settings = {
+      # greetd's default_session is its greeter: PAM registers it as class
+      # "greeter" with no VT, so a user-run Xorg there cannot open /dev/tty0.
+      # Keep a text fallback for logout, but do the boot autologin as a real
+      # user session via initial_session, which gets VT1 access from logind.
+      default_session = {
+        command = "${pkgs.greetd}/bin/agreety --cmd ${startXfce}";
+        user = "greeter";
+      };
+      initial_session = {
+        command = "${startXfce}";
+        user = "rodein";
+      };
     };
   };
 
