@@ -5,7 +5,7 @@
       {
 (modifiers: [Super]): Spawn("/run/current-system/sw/bin/cosmic-start-menu-applet --toggle"),
 (modifiers: [Super, Shift], key: "e"): Spawn("ghostty -e yazi"),
-(modifiers: [Super, Shift], key: "b"): Spawn("chromium"),
+(modifiers: [Super, Shift], key: "b"): Spawn("brave-origin"),
 }
     '';
   };

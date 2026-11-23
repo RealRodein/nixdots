@@ -32,8 +32,9 @@
     # Windows compatibility
     wineWow64Packages.waylandFull
 
-    # X11 Wine for the Twitch drops miner. Chromium/Brave renders blank under
-    # wine-wayland (Wine 11.0), but works through XWayland with wine64.
+    # X11 Wine for the Twitch drops miner. The miner (Chromium/Electron based)
+    # renders blank under wine-wayland (Wine 11.0), but works through XWayland
+    # with wine64.
     (writeShellScriptBin "wine-x11" ''
       unset WAYLAND_DISPLAY
       exec ${pkgs.wine64}/bin/wine "$@"

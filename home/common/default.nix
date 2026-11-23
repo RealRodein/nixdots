@@ -146,7 +146,6 @@ in
 
       "x-scheme-handler/http" = "firefox.desktop";
       "x-scheme-handler/https" = "firefox.desktop";
-      "x-scheme-handler/chrome" = "chromium-browser.desktop";
       "x-scheme-handler/discord" = "vesktop.desktop";
       "text/html" = "firefox.desktop";
       "application/xhtml+xml" = "firefox.desktop";
