@@ -27,16 +27,15 @@
   };
 
   # --- Display / Desktop ---
-  # The COSMIC session, its greeter and the matching xdg-desktop-portal-cosmic
-  # backend live in ./cosmic.nix. There is no X server on this machine:
-  # cosmic-comp runs its own XWayland for X11 clients.
+  # The XFCE X11 session, greetd autologin and portals live in ./xfce.nix.
+  # The NVIDIA/Xorg wiring shared by both hosts is in modules/nixos/hardware/.
 
   services.orca.enable = false;           # screen reader
   services.fwupd.enable = false;          # firmware update daemon
 
   # --- Swap ---
   # This box has 15 GiB of RAM, 12 cores and no swap, so Nix defaults to 12
-  # parallel build jobs and any large compile (cosmic, the nvidia driver)
+  # parallel build jobs and any large compile (the nvidia driver)
   # drives the box into a global OOM. The kernel then picks victims at random -
   # it took out nix mid-rebuild, vesktop, ghostty, pipewire and dbus-broker -
   # which is what the desktop surfaces as "the system is killing apps to protect

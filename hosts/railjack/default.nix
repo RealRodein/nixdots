@@ -13,7 +13,7 @@
 
     ./hardware.nix
     ./system.nix
-    ./cosmic.nix
+    ./xfce.nix
     ./users.nix
     ./packages.nix
   ];

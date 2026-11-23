@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "cosmic-start-menu-applet": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1791110999,
-        "narHash": "sha256-e7AYl4okxD93D6KDwsGrF2KNINvTPrnPfPpN48JO0VE=",
-        "owner": "jjnuthuagen",
-        "repo": "cosmic-start-menu-applet",
-        "rev": "9764f86c907c45183b3129aac13a0ace7a5ef792",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jjnuthuagen",
-        "repo": "cosmic-start-menu-applet",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -112,7 +96,6 @@
     },
     "root": {
       "inputs": {
-        "cosmic-start-menu-applet": "cosmic-start-menu-applet",
         "home-manager": "home-manager",
         "lsfg-vk": "lsfg-vk",
         "luciole": "luciole",

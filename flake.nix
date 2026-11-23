@@ -24,12 +24,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Classic Start menu for the COSMIC panel
-    cosmic-start-menu-applet = {
-      url = "github:jjnuthuagen/cosmic-start-menu-applet";
-      flake = false;
-    };
-
     # XEmbed -> StatusNotifierItem bridge for Wine tray icons on Wayland.
     # Needed so Wine apps (Twitch Drops Miner) show up in Noctalia's tray.
     wine-sni-bridge = {

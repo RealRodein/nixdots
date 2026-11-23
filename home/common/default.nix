@@ -3,7 +3,7 @@
 let
   isOrbiter = hostName == "orbiter";
   fileManager =
-    if isOrbiter then "dev.noctalia.luciole.desktop" else "com.system76.CosmicFiles.desktop";
+    if isOrbiter then "dev.noctalia.luciole.desktop" else "thunar.desktop";
 in
 {
   home.username = "rodein";

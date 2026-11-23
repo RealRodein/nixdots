@@ -35,7 +35,7 @@
   systemd.settings.Manager.RebootWatchdogSec = "0";
 
   # Both machines use the same Czech programmer layout. Niri reads its own
-  # copy in home/shared/niri/config.d/devices.kdl; this covers greetd, COSMIC
+  # copy in home/shared/niri/config.d/devices.kdl; this covers greetd, XFCE
   # and XWayland clients.
   services.xserver.xkb = {
     layout = "cz";

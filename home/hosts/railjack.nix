@@ -4,7 +4,7 @@
   imports = [
     ../common
     ../apps
-    ../desktop/cosmic.nix
+    ../desktop/xfce.nix
     ../desktop/matugen.nix
   ];
 

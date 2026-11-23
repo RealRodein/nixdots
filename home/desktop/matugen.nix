@@ -2,20 +2,25 @@
 
 let
   home = config.home.homeDirectory;
-  cosmicSettings = "${pkgs.cosmic-settings}/bin/cosmic-settings";
 
   refresh = pkgs.writeShellScript "matugen-refresh" ''
     set -euo pipefail
 
-    background_config="$HOME/.config/cosmic/com.system76.CosmicBackground/v1/all"
+    xfconf_query="${pkgs.xfconf}/bin/xfconf-query"
     wallpaper=""
 
-    if [ -f "$background_config" ]; then
-      wallpaper="$(sed -n 's/.*source: Path("\([^"]*\)").*/\1/p' "$background_config" | head -n1)"
-    fi
+    # XFCE stores the current wallpaper in the xfce4-desktop xfconf channel.
+    # Property names vary with the monitor, so search all backdrop properties.
+    for property in $($xfconf_query -c xfce4-desktop -l 2>/dev/null | ${pkgs.gnugrep}/bin/grep -E '/(image-path|last-image)$' || true); do
+      candidate="$($xfconf_query -c xfce4-desktop -p "$property" 2>/dev/null || true)"
+      if [ -n "$candidate" ] && [ -f "$candidate" ]; then
+        wallpaper="$candidate"
+        break
+      fi
+    done
 
     if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
-      wallpaper="$(${pkgs.findutils}/bin/find "$HOME/Pictures/Wallpapers" -maxdepth 1 -type f 2>/dev/null | head -n1 || true)"
+      wallpaper="$(${pkgs.findutils}/bin/find "$HOME/Pictures/Wallpapers" -maxdepth 1 -type f 2>/dev/null | ${pkgs.coreutils}/bin/head -n1 || true)"
     fi
 
     if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
@@ -23,18 +28,11 @@ let
       exit 0
     fi
 
-    mkdir -p "$HOME/.config/matugen/themes"
+    ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/matugen/themes"
 
     if ! ${pkgs.matugen}/bin/matugen image "$wallpaper" -m dark --source-color-index 0; then
       echo "matugen-refresh: matugen failed for $wallpaper" >&2
       exit 1
-    fi
-
-    if [ -x "${cosmicSettings}" ] && [ -f "$HOME/.config/matugen/themes/cosmic.ron" ]; then
-      if ! ${cosmicSettings} appearance import "$HOME/.config/matugen/themes/cosmic.ron"; then
-        echo "matugen-refresh: COSMIC theme import failed" >&2
-        exit 1
-      fi
     fi
   '';
 in
@@ -72,10 +70,6 @@ in
       [templates.zathura]
       input_path = '${home}/.config/matugen/templates/zathura'
       output_path = '${home}/.config/zathura/matugen'
-
-      [templates.cosmic]
-      input_path = '${home}/.config/matugen/templates/cosmic_theme.ron'
-      output_path = '${home}/.config/matugen/themes/cosmic.ron'
     '';
 
     "matugen/templates/ghostty".source = ../shared/matugen/templates/ghostty;
@@ -83,8 +77,6 @@ in
     "matugen/templates/gtk.css".source = ../shared/matugen/templates/gtk.css;
     "matugen/templates/zed.json".source = ../shared/matugen/templates/zed.json;
     "matugen/templates/zathura".source = ../shared/matugen/templates/zathura;
-    "matugen/templates/cosmic_theme.ron".source =
-      ../shared/matugen/templates/cosmic_theme.ron;
   };
 
   systemd.user.services.matugen-refresh = {
@@ -97,9 +89,9 @@ in
   };
 
   systemd.user.paths.matugen = {
-    Unit.Description = "Watch the COSMIC wallpaper setting";
+    Unit.Description = "Watch the XFCE wallpaper setting";
     Path = {
-      PathChanged = "${home}/.config/cosmic/com.system76.CosmicBackground/v1/all";
+      PathChanged = "${home}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml";
       Unit = "matugen-refresh.service";
     };
     Install.WantedBy = [ "default.target" ];
