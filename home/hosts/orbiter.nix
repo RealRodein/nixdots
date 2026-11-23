@@ -5,6 +5,7 @@
     ../common
     ../apps
     ../apps/luciole.nix
+    ../apps/moonlight.nix
     ../desktop/niri.nix
     ../desktop/noctalia.nix
   ];
