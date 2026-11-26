@@ -492,11 +492,11 @@ radius = 12
 reserve_space = false
 
 [hooks]
-battery_charging = "/home/rodein/.config/my-scripts/toggles-power.sh"
-battery_discharging = "/home/rodein/.config/my-scripts/toggles-save.sh"
-colors-changed = "/home/rodein/.config/ghostty/titlebar-sync.sh"
-started = "noctalia msg action screen-lock & /home/rodein/.config/my-scripts/startapps.sh"
-wallpaper_changed = "/home/rodein/.config/ghostty/titlebar-sync.sh"
+battery_charging = "~/.config/my-scripts/toggles-power.sh"
+battery_discharging = "~/.config/my-scripts/toggles-save.sh"
+colors-changed = "~/.config/ghostty/titlebar-sync.sh"
+started = "noctalia msg action screen-lock & ~/.config/my-scripts/startapps.sh"
+wallpaper_changed = "~/.config/ghostty/titlebar-sync.sh"
 
 [idle]
 behavior_order = [ "lock", "screen-off", "suspend" ]
@@ -662,7 +662,7 @@ widget_order = [
         background_opacity = 1.0
         background_padding = 12
         background_radius = 12
-        image_path = "/home/rodein/Pictures/face.jpg"
+        image_path = "~/Pictures/face.jpg"
         opacity = 1.0
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000005]
@@ -684,7 +684,7 @@ widget_order = [
         color = "primary"
         font_family = "JetBrainsMono NFM"
         opacity = 1.0
-        title = "Rodein"
+        title = "Desktop"
 
 [notification]
 allowed_urgencies = [ "low", "normal", "critical" ]
@@ -719,7 +719,7 @@ video_directory = "~/Pictures/Wallpapers"
 [plugin_settings."noctalia/wallhaven"]
 api_key = "1wMs8OhcJox9D5VgW5ml8gcvwgM3pNLQ"
 browser_placement = "floating"
-download_dir = "/home/rodein/Pictures/WallHaven"
+download_dir = "~/Pictures/WallHaven"
 
 [plugin_settings."noctalia/wallpaper_depth"]
 auto_generate = false
@@ -749,7 +749,7 @@ enabled = [ "noctalia/mpvpaper", "noctalia/wallhaven", "rylos/tailnet" ]
 
 [shell]
 app_icon_color = "primary"
-avatar_path = "/home/rodein/Pictures/face.jpg"
+avatar_path = "~/Pictures/face.jpg"
 corner_radius_scale = 1.1000000163912773
 font_family = "JetBrainsMono Nerd Font Mono"
 lang = "en"
@@ -788,7 +788,7 @@ ui_scale = 0.85000000521540642
     size = 25
 
     [shell.screenshot]
-    directory = "/home/rodein/Pictures/Screenshots"
+    directory = "~/Pictures/Screenshots"
 
     [shell.session]
     grid = true
@@ -864,16 +864,16 @@ wallpaper_scheme = "m3-content"
     ]
 
 [wallpaper]
-directory = "/home/rodein/Pictures/Wallpapers"
+directory = "~/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rodein/Pictures/Wallpapers/3s3iirbqnbvh1.png"
+    path = "~/Pictures/Wallpapers/3s3iirbqnbvh1.png"
 
     [wallpaper.last]
-    path = "/home/rodein/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_2b_sword_flowers_nier_automata_moewalls_com_mp4.jpg"
+    path = "~/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_2b_sword_flowers_nier_automata_moewalls_com_mp4.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rodein/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_2b_sword_flowers_nier_automata_moewalls_com_mp4.jpg"
+    path = "~/.cache/noctalia/mpvpaper/_home_rodein_Pictures_Wallpapers_2b_sword_flowers_nier_automata_moewalls_com_mp4.jpg"
 
 [weather]
 auto_locate = true
@@ -922,7 +922,7 @@ stat = "cpu_temp"
 capsule = true
 capsule_opacity = 0.0
 capsule_radius = 6
-custom_image = "/home/rodein/.local/state/noctalia/logos/nix-snowflake-white.svg"
+custom_image = "~/.local/state/noctalia/logos/nix-snowflake-white.svg"
 scale = 1.1000000000000001
 
 [widget.media]
