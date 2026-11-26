@@ -1,7 +1,7 @@
-{ ... }:
+{ user, ... }:
 
 {
-  users.users.rodein = {
+  users.users.${user.name} = {
     extraGroups = [ "wheel" "networkmanager" "audio" "video" "tailscale" ];
   };
 }

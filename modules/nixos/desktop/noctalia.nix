@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, user, ... }:
 
 let
   # Keep Noctalia from nixpkgs-unstable; the rest of the system stays on
@@ -51,7 +51,7 @@ in
     enable = true;
     settings.default_session = {
       command = "${niriSession}/bin/niri-session";
-      user = "rodein";
+      user = user.name;
     };
   };
 

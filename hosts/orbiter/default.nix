@@ -7,7 +7,7 @@
     ../../modules/nixos/packages/common.nix
     ../../modules/nixos/packages/cli.nix
     ../../modules/nixos/packages/gui.nix
-    ../../modules/nixos/users/rodein-base.nix
+    ../../modules/nixos/users/base.nix
 
     # Orbiter live desktop module (Noctalia/Niri).
     ../../modules/nixos/desktop/noctalia.nix

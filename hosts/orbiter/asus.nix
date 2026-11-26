@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, user, ... }:
 
 {
   # Remap right Ctrl to Shift on the internal keyboard.
@@ -27,10 +27,10 @@
   systemd.services.asus-fn-scroll-evsieve =
     let
       # Run a command as the desktop user with the Wayland session environment.
-      asUser = cmd: pkgs.writeShellScript "evsieve-as-rodein" ''
-        uid=$(id -u rodein)
+      asUser = cmd: pkgs.writeShellScript "evsieve-as-user" ''
+        uid=$(id -u ${user.name})
         r="/run/user/$uid"
-        exec ${pkgs.util-linux}/bin/runuser -u rodein -- env \
+        exec ${pkgs.util-linux}/bin/runuser -u ${user.name} -- env \
           XDG_RUNTIME_DIR="$r" \
           DBUS_SESSION_BUS_ADDRESS="unix:path=$r/bus" \
           WAYLAND_DISPLAY="$(ls "$r"/wayland-* 2>/dev/null | head -n1 | xargs -r basename)" \
@@ -43,7 +43,7 @@
         asusctl profile next
         noctalia msg notification-show "Power Profile" "$(asusctl profile get | sed -n 's/^Active profile: //p')"
       '';
-      rog = asUser "bash ${config.users.users.rodein.home}/.config/my-scripts/toggle-rog-cc.sh";
+      rog = asUser "bash ${config.users.users.${user.name}.home}/.config/my-scripts/toggle-rog-cc.sh";
       script = pkgs.writeShellScript "asus-fn-scroll-evsieve" ''
         set -euo pipefail
         dev=""

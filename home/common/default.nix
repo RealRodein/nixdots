@@ -1,13 +1,12 @@
-{ pkgs, hostName, ... }:
+{ pkgs, hostName, user, ... }:
 
 let
   isOrbiter = hostName == "orbiter";
-  fileManager =
-    if isOrbiter then "dev.noctalia.luciole.desktop" else "thunar.desktop";
+  fileManager = "dev.noctalia.luciole.desktop";
 in
 {
-  home.username = "rodein";
-  home.homeDirectory = "/home/rodein";
+  home.username = user.name;
+  home.homeDirectory = user.home;
   home.stateVersion = "26.05";
 
   programs.home-manager.enable = true;
@@ -85,7 +84,12 @@ in
     PAGER = "less";
     BROWSER = "firefox";
     TERMINAL = "ghostty";
-    GAMEMODERUNEXEC = "env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia mangohud";
+    # Orbiter needs PRIME render offload to reach its discrete GPU. Railjack's
+    # display is already on the RTX 3070, so those variables would only make
+    # GameMode pick the wrong GPU (or fail on the legacy 1050 Ti driver).
+    GAMEMODERUNEXEC =
+      if isOrbiter then "env __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia mangohud"
+      else "mangohud";
     # GE-Proton 11-1 ships rpc-bridge behind this flag, letting Windows games
     # set Discord Rich Presence through native Vesktop's IPC socket. Ignored by
     # stock Proton.
@@ -95,8 +99,8 @@ in
   programs.git = {
     enable = true;
     settings = {
-      user.name = "RealRodein";
-      user.email = "rodein.personal@gmail.com";
+      user.name = user.gitName;
+      user.email = user.email;
       core.pager = "delta";
       interactive.diffFilter = "delta --color-only";
       merge.conflictStyle = "zdiff3";

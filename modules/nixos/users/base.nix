@@ -1,7 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, user, ... }:
 
 {
-  users.users.rodein = {
+  users.users.${user.name} = {
     isNormalUser = true;
     shell = pkgs.fish;
   };
