@@ -43,9 +43,10 @@
       options = [ "nofail" "defaults" "uid=1000" "gid=1000" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/1d586868-355a-4521-af01-8e2238773a4d"; }
-    ];
+  # No swapDevices here: the old partition swap entry pointed at a UUID that no
+  # longer exists, so systemd waited the full 90s device timeout before Swaps
+  # failed and blocked the rest of boot. The working 8 GiB swapfile is declared
+  # in ./system.nix.
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

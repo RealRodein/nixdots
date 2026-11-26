@@ -6,14 +6,15 @@
     ../../modules/nixos/packages/common.nix
     ../../modules/nixos/packages/cli.nix
     ../../modules/nixos/packages/gui.nix
-    ../../modules/nixos/users/rodein-base.nix
+    ../../modules/nixos/users/base.nix
     ../../modules/nixos/hardware/nvidia.nix
     ../../modules/nixos/features/gaming.nix
     ../../modules/nixos/features/tailscale.nix
 
+    ./fonts.nix
     ./hardware.nix
     ./system.nix
-    ./xfce.nix
+    ./umbriel.nix
     ./users.nix
     ./packages.nix
   ];

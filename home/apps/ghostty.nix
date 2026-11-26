@@ -1,7 +1,7 @@
-{ hostName, ... }:
+{ ... }:
 
 let
-  theme = if hostName == "orbiter" then "noctalia" else "matugen";
+  theme = "noctalia";
 in
 {
   xdg.configFile."ghostty/config".text = ''

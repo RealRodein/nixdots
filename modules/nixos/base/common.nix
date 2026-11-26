@@ -34,9 +34,9 @@
   # message (the kernel "nowatchdog" param does not affect systemd's use).
   systemd.settings.Manager.RebootWatchdogSec = "0";
 
-  # Both machines use the same Czech programmer layout. Niri reads its own
-  # copy in home/shared/niri/config.d/devices.kdl; this covers greetd, XFCE
-  # and XWayland clients.
+  # Both machines use the same Czech programmer layout. Niri and Umbriel read
+  # their own copies in home/shared/niri/ and home/desktop/umbriel.nix; this
+  # covers greetd and XWayland clients.
   services.xserver.xkb = {
     layout = "cz";
     variant = "coder";

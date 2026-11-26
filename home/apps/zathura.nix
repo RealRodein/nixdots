@@ -1,4 +1,4 @@
-{ config, lib, hostName, ... }:
+{ config, ... }:
 
 let
   ayuColors = ''
@@ -37,7 +37,9 @@ in
     set font "JetBrainsMono Nerd Font Mono 10"
   '';
 
-  xdg.configFile."zathura/matugen" = lib.mkIf (hostName == "orbiter") {
+  # Named "matugen" for historical reasons; it is a static Ayu palette on both
+  # hosts now (Noctalia owns theming).
+  xdg.configFile."zathura/matugen" = {
     text = ayuColors;
     force = true;
   };
